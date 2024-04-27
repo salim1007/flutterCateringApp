@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/components/image_slider.dart';
 import 'package:food_delivery_app/main_layout.dart';
 import 'package:food_delivery_app/screens/auth_page.dart';
+import 'package:food_delivery_app/screens/book_list.dart';
 import 'package:food_delivery_app/screens/cart_page.dart';
 import 'package:food_delivery_app/screens/item_details.dart';
 import 'package:food_delivery_app/screens/order_page.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         'item_details': (context) => const ItemDetails(),
         'cart_page': (context) => const CartsPage(),
         'orders_page': (context) => const OrdersPage(),
+        'book_list':(context) => const BookList()
       },
     );
   }

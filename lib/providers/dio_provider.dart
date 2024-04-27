@@ -241,6 +241,61 @@ class DioProvider{
     }
   }
 
+  Future<dynamic> bookTable(String date, String time, String day, int userId,int noOfPeople, String token) async{
+    try{
+      var response = await Dio().post('http://127.0.0.1:8000/api/bookTable',
+      data: {'date': date, 'time':time, 'day':day, 'user_id':userId, 'no_of_people':noOfPeople},
+      options: Options(headers: {'Authorization': 'Bearer $token'})
+      );
+      if(response.statusCode == 200 && response.data !=''){
+        return true;
+      }else{
+        return false;
+      }
+
+    }catch(error){
+      return false;
+    }
+  }
+
+ Future<dynamic> fetchBooks(int userId, String token) async{
+    try{
+      var books = await Dio().get('http://127.0.0.1:8000/api/getUserBooks',
+      queryParameters: {'user_id': userId},
+      options: Options(headers: {'Authorization': 'Bearer $token'})
+      );
+      if(books.statusCode == 200 && books.data !=''){
+        return json.encode(books.data);
+      }else{
+        return false;
+      }
+
+    }catch(error){
+      return error.toString();
+    }
+  }
+
+  Future<dynamic> changeBookStatus(String status,int bookId, String token) async{
+    try{
+      var response = await Dio().put('http://127.0.0.1:8000/api/changeBookStatus',
+      data: {'status':status},
+      queryParameters: {'book_id':bookId},
+      options: Options(headers: {'Authorization': 'Bearer $token'})
+      );
+      if(response.data['status'] == 200){
+        return true;
+      }else{
+        return false;
+      }
+
+    }catch(error){
+      print('Errorz: $error');
+      return error.toString();
+    }
+
+  }
+
+
 
  
 

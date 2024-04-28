@@ -7,6 +7,7 @@ import 'package:food_delivery_app/screens/cart_page.dart';
 import 'package:food_delivery_app/screens/item_details.dart';
 import 'package:food_delivery_app/screens/order_page.dart';
 import 'package:food_delivery_app/screens/otp_verification.dart';
+import 'package:food_delivery_app/screens/search_page.dart';
 
 
 void main() {
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         'item_details': (context) => const ItemDetails(),
         'cart_page': (context) => const CartsPage(),
         'orders_page': (context) => const OrdersPage(),
-        'book_list':(context) => const BookList()
+        'book_list':(context) => const BookList(),
+        'search_page':(context) => const SearchPage()
       },
     );
   }

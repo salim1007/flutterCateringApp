@@ -12,7 +12,8 @@ class BookList extends StatefulWidget {
   State<BookList> createState() => _BookListState();
 }
 
-class _BookListState extends State<BookList> with SingleTickerProviderStateMixin{
+class _BookListState extends State<BookList>
+    with SingleTickerProviderStateMixin {
   String? token;
   List<dynamic> userBooks = [];
   Map<dynamic, dynamic>? userData;
@@ -21,7 +22,7 @@ class _BookListState extends State<BookList> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-     _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _getBooks();
   }
 
@@ -52,9 +53,7 @@ class _BookListState extends State<BookList> with SingleTickerProviderStateMixin
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            bottom:  TabBar(
-              controller: _tabController,
-              tabs: const [
+            bottom: TabBar(controller: _tabController, tabs: const [
               Tab(
                 child: Text('upcoming'),
               ),
@@ -70,8 +69,9 @@ class _BookListState extends State<BookList> with SingleTickerProviderStateMixin
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             leading: GestureDetector(
-              onTap: (){
-                MyApp.navigatorKey.currentState!.pushNamed('main_layout', arguments: userData);
+              onTap: () {
+                MyApp.navigatorKey.currentState!
+                    .pushNamed('main_layout', arguments: userData);
               },
               child: Icon(FontAwesomeIcons.arrowLeft),
             ),
@@ -154,7 +154,7 @@ class _BookListState extends State<BookList> with SingleTickerProviderStateMixin
 
                                           if (response) {
                                             await _getBooks();
-                                             _tabController?.animateTo(1);
+                                            _tabController?.animateTo(1);
                                           }
                                         },
                                         child: const Text('Completed',
@@ -166,7 +166,7 @@ class _BookListState extends State<BookList> with SingleTickerProviderStateMixin
                                       width: 10,
                                     ),
                                     TextButton(
-                                        onPressed: () async{
+                                        onPressed: () async {
                                           final SharedPreferences prefs =
                                               await SharedPreferences
                                                   .getInstance();
@@ -179,7 +179,7 @@ class _BookListState extends State<BookList> with SingleTickerProviderStateMixin
 
                                           if (response) {
                                             await _getBooks();
-                                             _tabController?.animateTo(2);
+                                            _tabController?.animateTo(2);
                                           }
                                         },
                                         child: const Text('Cancel',

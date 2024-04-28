@@ -295,6 +295,22 @@ class DioProvider{
 
   }
 
+  Future<dynamic> getAllProducts(String token) async{
+    try{
+      var products = await Dio().get('http://127.0.0.1:8000/api/getAllProducts',
+      options: Options(headers: {'Authorization': 'Bearer $token'})
+      );
+      if(products.statusCode == 200 && products.data !=''){
+        return json.encode(products.data);
+      }else{
+        return false;
+      }
+
+    }catch(error){
+      return error.toString();
+    }
+  }
+
 
 
  

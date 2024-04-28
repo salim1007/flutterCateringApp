@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/card_item.dart';
+import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -140,14 +141,13 @@ Future<void> _initializeLocation() async {
                 height: 15,
               ),
               SearchBar(
+                onTap: (){
+                  MyApp.navigatorKey.currentState!.pushNamed('search_page');
+                },
                 hintText: 'Search...',
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                onChanged: (value) {
-                  setState(() {
-                    _searchText = value;
-                  });
-                },
+              
               ),
               SizedBox(
                 height: 15,

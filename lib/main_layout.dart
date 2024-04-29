@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/screens/booking_page.dart';
 import 'package:food_delivery_app/screens/cart_page.dart';
+import 'package:food_delivery_app/screens/favourites_page.dart';
 import 'package:food_delivery_app/screens/home_page.dart';
 import 'package:food_delivery_app/screens/order_page.dart';
 import 'package:food_delivery_app/screens/profile_page.dart';
@@ -35,24 +36,30 @@ class _MainLayoutState extends State<MainLayout> {
           CartsPage(),
           OrdersPage(),
           BookingPage(),
+          FavouritesPage(),
           ProfilePage(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        child: Center(
-          child: Column(
-          children: [
-            SizedBox(height: 9),
-            Icon(FontAwesomeIcons.listUl, color: Colors.orangeAccent,),
-            Text('Bookings', style: TextStyle(fontSize: 10),)
-          ],
-        ),
-        ),
-        onPressed: () {
-          MyApp.navigatorKey.currentState!.pushNamed('book_list');
-        }
-        ),
+          backgroundColor: Colors.white,
+          child: Center(
+            child: Column(
+              children: [
+                SizedBox(height: 9),
+                Icon(
+                  FontAwesomeIcons.listUl,
+                  color: Colors.orangeAccent,
+                ),
+                Text(
+                  'Bookings',
+                  style: TextStyle(fontSize: 10),
+                )
+              ],
+            ),
+          ),
+          onPressed: () {
+            MyApp.navigatorKey.currentState!.pushNamed('book_list');
+          }),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentPage,
         onTap: (page) {
@@ -79,6 +86,9 @@ class _MainLayoutState extends State<MainLayout> {
           BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.book, color: Colors.orangeAccent),
               label: 'Book'),
+          BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.heart, color: Colors.orangeAccent),
+              label: 'Fav'),
           BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.person, color: Colors.orangeAccent),
               label: 'Profile'),

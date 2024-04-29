@@ -28,12 +28,12 @@ class _OrdersPageState extends State<OrdersPage> {
       var user = await DioProvider().getUser(token);
       final userData = json.decode(user);
       var orders = await DioProvider().getAuthUserOrders(userData['id'], token);
-      if (orders != null) {
-        setState(() {
-          ordersList = json.decode(orders);
-          print(ordersList);
-        });
-      }
+     if (orders != null && mounted) {
+      setState(() {
+        ordersList = json.decode(orders);
+        print(ordersList);
+      });
+    }
     }
   }
 

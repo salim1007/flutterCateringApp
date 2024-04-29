@@ -41,9 +41,14 @@ class _ItemDetailsState extends State<ItemDetails> {
         backgroundColor: Colors.orangeAccent,
         actions: [
           Padding(
-            child: Icon(
+            child: GestureDetector(
+              onTap: (){
+                
+              },
+              child: Icon(
               Icons.favorite_outline,
               color: Colors.red,
+            ),
             ),
             padding: EdgeInsets.only(right: 12),
           )

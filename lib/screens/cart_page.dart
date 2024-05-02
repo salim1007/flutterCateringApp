@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/main.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 
 class CartsPage extends StatefulWidget {
   const CartsPage({super.key});
@@ -16,95 +16,29 @@ class CartsPage extends StatefulWidget {
 
 class _CartsPageState extends State<CartsPage> {
   int qty = 1;
-  List<dynamic> authCart = [];
-  double totalCartPrice = 0;
+
   bool showLeading = false;
-
-  Position? _currentLocation;
-  late bool servicePermisiion = false;
-  late LocationPermission permission;
-  String _currentAddress = '';
-
 
   @override
   void initState() {
     super.initState();
-    _getUserCarts();
-     _initializeLocation();
-  }
-
-
-Future<void> _initializeLocation() async {
-  _currentLocation = await _getCurrentLocation();
-  await _getAddressFromCoordinates();
-  print(_currentAddress);
-}
-
-  Future<Position> _getCurrentLocation() async{
-    servicePermisiion = await Geolocator.isLocationServiceEnabled();
-    if(servicePermisiion == false){
-      print('Service disabled!');
-
-    }
-
-    permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied){
-      permission = await Geolocator.requestPermission();
-
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
-
-  _getAddressFromCoordinates() async{
-    try{
-      List<Placemark> placemarks = await placemarkFromCoordinates(_currentLocation!.latitude, _currentLocation!.longitude);
-      Placemark place = placemarks[0];
-
-      setState(() {
-        _currentAddress = '${place.street} - ${place.subLocality}, ${place.locality}';
-       
-
-      });
-
-    }catch(error){
-      return error;
-    }
-  }
-
-  
-
-  Future<void> _getUserCarts() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-      var token = prefs.getString('token') ?? '';
-      if (token.isNotEmpty) {
-      var user = await DioProvider().getUser(token);
-      final userData = json.decode(user);
-      var Cart = await DioProvider().getUserCart(userData['id']);
-      final authUserCart = json.decode(Cart);
-
-      double total = 0;
-      for(var cartItem in authUserCart){
-        total += cartItem['total_price'];
-      }
-
-      setState(() {
-         authCart = authUserCart;
-         totalCartPrice = total;
-      });
-
-      print(authCart);
-      print(totalCartPrice);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    bool showLeadingBtn = args['showLeadingButton'] ?? false;
+    final args = ModalRoute.of(context)!.settings.arguments as Map?;
+    bool showLeadingBtn = args != null ? args['showLeadingButton'] ?? false : false;
     setState(() {
       showLeading = showLeadingBtn;
     });
+
+    var currentLocation =
+        Provider.of<AuthModel>(context, listen: false).getCurrentLocation;
+    var authCart = Provider.of<AuthModel>(context, listen: false).getAuthCart;
+    var totalCartPrice =
+        Provider.of<AuthModel>(context, listen: false).getTotalCartPrice;
+
+    print(totalCartPrice);
 
     return Scaffold(
       appBar: AppBar(
@@ -131,7 +65,7 @@ Future<void> _initializeLocation() async {
                   color: Color.fromARGB(255, 216, 154, 73),
                 ),
                 child: Column(
-                  children: authCart.map((cartItem){
+                  children: authCart.map((cartItem) {
                     return Container(
                       height: 100,
                       padding: EdgeInsets.all(10),
@@ -167,7 +101,7 @@ Future<void> _initializeLocation() async {
                                     children: [
                                       Text(
                                         //
-                                       '${cartItem['product_name']}',
+                                        '${cartItem['product_name']}',
                                         style: TextStyle(fontSize: 9),
                                       ),
                                       Text(
@@ -179,8 +113,8 @@ Future<void> _initializeLocation() async {
                                         style: TextStyle(fontSize: 9),
                                       ),
                                       Text(
-                                      '${cartItem['prod_size'] != null ? 'Size: ${cartItem['prod_size']} inches' : ''}',
-                                       style: TextStyle(fontSize: 9),
+                                        '${cartItem['prod_size'] != null ? 'Size: ${cartItem['prod_size']} inches' : ''}',
+                                        style: TextStyle(fontSize: 9),
                                       )
                                     ]),
                               ),
@@ -199,31 +133,37 @@ Future<void> _initializeLocation() async {
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: IconButton(
-                                      onPressed: () async{
-                                        final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                        var token = prefs.getString('token') ?? '';
-                                         if (token.isNotEmpty) {
-                                           var user = await DioProvider().getUser(token);
-                                           final userData = json.decode(user);
-                                           final response = await DioProvider().cartIncr(userData['id'], cartItem['prod_id'], token);
-                                           if(response){
-                                            print('increased qty successfully!');
+                                      onPressed: () async {
+                                        final SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        var token =
+                                            prefs.getString('token') ?? '';
+                                        if (token.isNotEmpty) {
+                                          var user = await DioProvider()
+                                              .getUser(token);
+                                          final userData = json.decode(user);
+                                          final response = await DioProvider()
+                                              .cartIncr(userData['id'],
+                                                  cartItem['prod_id'], token);
+                                          if (response) {
+                                            print(
+                                                'increased qty successfully!');
                                             setState(() {
-                                             var divider = cartItem['total_price'] / cartItem['prod_qty'];
-                                             cartItem['prod_qty']++;
-                                             cartItem['total_price'] = divider * cartItem['prod_qty'];
+                                              var divider =
+                                                  cartItem['total_price'] /
+                                                      cartItem['prod_qty'];
+                                              cartItem['prod_qty']++;
+                                              cartItem['total_price'] =
+                                                  divider *
+                                                      cartItem['prod_qty'];
 
-                                             double total = 0;
-                                             for(var cartItem in authCart){
-                                              total += cartItem['total_price'];
-                                             }
-
-                                             totalCartPrice = total;
-                                             
+                                              Provider.of<AuthModel>(context,
+                                                      listen: false)
+                                                  .updateTotalCartPrice();
                                             });
-                                           }
                                           }
-                                           
+                                        }
                                       },
                                       icon: FaIcon(FontAwesomeIcons.plus),
                                       style: ButtonStyle(
@@ -250,31 +190,37 @@ Future<void> _initializeLocation() async {
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: IconButton(
-                                      onPressed: () async{
-                                        final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                        var token = prefs.getString('token') ?? '';
-                                         if (token.isNotEmpty) {
-                                           var user = await DioProvider().getUser(token);
-                                           final userData = json.decode(user);
-                                           final response = await DioProvider().cartDecr(userData['id'], cartItem['prod_id'], token);
-                                           if(response){
-                                            print('decreased qty successfully!');
+                                      onPressed: () async {
+                                        final SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        var token =
+                                            prefs.getString('token') ?? '';
+                                        if (token.isNotEmpty) {
+                                          var user = await DioProvider()
+                                              .getUser(token);
+                                          final userData = json.decode(user);
+                                          final response = await DioProvider()
+                                              .cartDecr(userData['id'],
+                                                  cartItem['prod_id'], token);
+                                          if (response) {
+                                            print(
+                                                'decreased qty successfully!');
                                             setState(() {
-                                            var divider = cartItem['total_price'] / cartItem['prod_qty'];
-                                             cartItem['prod_qty']--;
-                                             cartItem['total_price'] = divider * cartItem['prod_qty'];
+                                              var divider =
+                                                  cartItem['total_price'] /
+                                                      cartItem['prod_qty'];
+                                              cartItem['prod_qty']--;
+                                              cartItem['total_price'] =
+                                                  divider *
+                                                      cartItem['prod_qty'];
 
-
-                                             double total = 0;
-                                             for(var cartItem in authCart){
-                                              total += cartItem['total_price'];
-                                             }
-
-                                             totalCartPrice = total;
+                                              Provider.of<AuthModel>(context,
+                                                      listen: false)
+                                                  .updateTotalCartPrice();
                                             });
-                                           }
                                           }
-                                        
+                                        }
                                       },
                                       icon: FaIcon(FontAwesomeIcons.minus),
                                       style: ButtonStyle(
@@ -287,18 +233,25 @@ Future<void> _initializeLocation() async {
                               width: 10,
                             ),
                             GestureDetector(
-                              onTap: () async{
-                                final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                        var token = prefs.getString('token') ?? '';
-                                         if (token.isNotEmpty) {
-                                           var user = await DioProvider().getUser(token);
-                                           final userData = json.decode(user);
-                                           final response = await DioProvider().deleteCartProduct(userData['id'], cartItem['prod_id'], token);
-                                           if(response){
-                                            _getUserCarts();
-                                           }
-                                           }
-                                
+                              onTap: () async {
+                                final SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                var token = prefs.getString('token') ?? '';
+                                if (token.isNotEmpty) {
+                                  var user = await DioProvider().getUser(token);
+                                  final userData = json.decode(user);
+                                  final response = await DioProvider()
+                                      .deleteCartProduct(userData['id'],
+                                          cartItem['prod_id'], token);
+                                  if (response) {
+                                      var updatedCart = await DioProvider().getUserCart(userData['id']);
+                                      var authModel = Provider.of<AuthModel>(context, listen: false);
+                                      setState(() {
+                                        authModel.updateCart(json.decode(updatedCart));
+                                      });
+                                      print('prod deleted');
+                                  }
+                                }
                               },
                               child: Container(
                                 child: Icon(
@@ -319,86 +272,151 @@ Future<void> _initializeLocation() async {
               ),
               Container(
                 padding: EdgeInsets.all(2),
-                 margin: EdgeInsets.all(10),
+                margin: EdgeInsets.all(10),
                 child: Text(
-                  'Total Cost: ${totalCartPrice}/=', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  'Total Cost: $totalCartPrice/=',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
               Container(
-                padding: EdgeInsets.all(5),
-                margin: EdgeInsets.all(20),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.orangeAccent
-                ),
-                child: TextButton(
-                  onPressed: () async{
-                    showDialog(context: context, builder: (BuildContext context){
-                      return AlertDialog(
-                        title: Text(
-                          'You are about to place an Order!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 219, 135, 10)),
-                        ),
-                        content: Container(
-                          height: 200,
-                          child: Column(
-                            children: [
-                              Text('Total Amount:', style: TextStyle(fontSize: 16,),),
-                              Text('${totalCartPrice}/=', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                              SizedBox(height: 20,),
-                              Text('Delivery Location', style: TextStyle(fontSize: 16),),
-                              Text('${_currentAddress}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold,),),
-                              SizedBox(height: 20,),
-                              TextButton(
-                                onPressed: () async{
-                                  final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                  var token = prefs.getString('token') ?? '';
-                                  if (token.isNotEmpty) {
-                                  var user = await DioProvider().getUser(token);
-                                  final userData = json.decode(user);
-                                  
+                  padding: EdgeInsets.all(5),
+                  margin: EdgeInsets.all(20),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.orangeAccent),
+                  child: TextButton(
+                    onPressed: () async {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                                title: const Text(
+                                  'You are about to place an Order!',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(
+                                          255, 219, 135, 10)),
+                                ),
+                                content: Container(
+                                  height: 200,
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                        'Total Amount:',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${totalCartPrice}/=',
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      const Text(
+                                        'Delivery Location',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      Text(
+                                        currentLocation,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      TextButton(
+                                          onPressed: () async {
+                                            final SharedPreferences prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            var token =
+                                                prefs.getString('token') ?? '';
+                                            if (token.isNotEmpty) {
+                                              var user = await DioProvider()
+                                                  .getUser(token);
+                                              final userData =
+                                                  json.decode(user);
 
-                                  final response = await DioProvider().placeOrder(userData['id'], authCart, totalCartPrice,_currentAddress,token);
-                                   print(response);
-                                  if(response){
-                                    var isDeleted = await DioProvider().deleteUserCart(userData['id'], token);
-                                    if(isDeleted == true){
-                                      print('data deleted!');
-                                    }
-                                     MyApp.navigatorKey.currentState!.pushNamed('orders_page');
-                                  }
+                                              final response =
+                                                  await DioProvider()
+                                                      .placeOrder(
+                                                          userData['id'],
+                                                          authCart,
+                                                          totalCartPrice,
+                                                          currentLocation,
+                                                          token);
 
-                                  }
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.orangeAccent
+                                              print(response);
+                                              if (response) {
+                                                var newOrder =
+                                                    await DioProvider()
+                                                        .getAuthUserOrders(
+                                                            userData['id'],
+                                                            token);
+
+                                                var authModel =
+                                                    Provider.of<AuthModel>(
+                                                        context,
+                                                        listen: false);
+
+                                                authModel.updateOrder(
+                                                    json.decode(newOrder));
+
+                                                var isDeleted =
+                                                    await DioProvider()
+                                                        .deleteUserCart(
+                                                            userData['id'],
+                                                            token);
+                                                if (isDeleted == true) {
+                                                  var newCartData = await DioProvider().getUserCart(userData['id']);
+                                                  var authModel = Provider.of<AuthModel>(context, listen: false);
+                                                  setState(() {
+                                                    authModel.updateCart(json.decode(newCartData));
+                                                  });
+
+                                                  print('data deleted!');
+                                                }
+                                                MyApp.navigatorKey.currentState!
+                                                    .pushNamed('orders_page');
+                                              }
+                                            }
+                                          },
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.orangeAccent),
+                                              padding: EdgeInsets.all(10),
+                                              child: const Text(
+                                                'Place Order',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                              )))
+                                    ],
                                   ),
-                                  padding: EdgeInsets.all(10),
-                                 
-                                  child: Text('Place Order', style: TextStyle(color: Colors.black,),))
-                                )
-                            ],
-                          ),
-                        )
-                      );
-                    });
-                    
+                                ));
+                          });
 
-                      
-                    //  }
-                  },
-                  child: Text('Continue To Checkout', style: TextStyle(fontSize: 15, color: Colors.black), ),
-                  
-                )
-              )
+                      //  }
+                    },
+                    child: const Text(
+                      'Continue To Checkout',
+                      style: TextStyle(fontSize: 15, color: Colors.black),
+                    ),
+                  ))
             ],
           ),
         ),
-        
       ),
-  
     );
   }
 }

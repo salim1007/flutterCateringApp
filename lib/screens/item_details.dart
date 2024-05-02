@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/main.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ItemDetails extends StatefulWidget {
@@ -21,19 +23,18 @@ class _ItemDetailsState extends State<ItemDetails> {
   bool isMediumSelected = false;
   bool isLargeSelected = false;
   double factor = 1.0;
- 
 
   bool showLeadingButton = true;
 
-
   @override
   Widget build(BuildContext context) {
-
     var args = ModalRoute.of(context)!.settings.arguments as Map;
     var product = args['product'];
     var category = args['category'];
 
-    final nullCheck = category['small_size'] != null && category['medium_size'] != null && category['large_size'] != null;
+    final nullCheck = category['small_size'] != null &&
+        category['medium_size'] != null &&
+        category['large_size'] != null;
 
     return Scaffold(
       backgroundColor: Colors.orangeAccent,
@@ -42,13 +43,11 @@ class _ItemDetailsState extends State<ItemDetails> {
         actions: [
           Padding(
             child: GestureDetector(
-              onTap: (){
-                
-              },
+              onTap: () {},
               child: Icon(
-              Icons.favorite_outline,
-              color: Colors.red,
-            ),
+                Icons.favorite_outline,
+                color: Colors.red,
+              ),
             ),
             padding: EdgeInsets.only(right: 12),
           )
@@ -75,134 +74,140 @@ class _ItemDetailsState extends State<ItemDetails> {
               SizedBox(
                 height: 20,
               ),
-              nullCheck ?
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10)
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
-                         setState(() {
-                          isSmallSelected = true;
-                          isMediumSelected = false;
-                          isLargeSelected = false;
-                          factor = 1.0;
-                        });
-
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                        color: isSmallSelected ?Color.fromARGB(255, 240, 235, 222) : Color.fromARGB(255, 233, 148, 21),
-                        borderRadius: BorderRadius.circular(10)
-                        ),
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Small',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold
+              nullCheck
+                  ? Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isSmallSelected = true;
+                                isMediumSelected = false;
+                                isLargeSelected = false;
+                                factor = 1.0;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: isSmallSelected
+                                      ? Color.fromARGB(255, 240, 235, 222)
+                                      : Color.fromARGB(255, 233, 148, 21),
+                                  borderRadius: BorderRadius.circular(10)),
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Small',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    '${category['small_size']}' +
+                                        ' ' +
+                                        'inches',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            SizedBox(height: 5,),
-                            Text(
-                              '${category['small_size']}' + ' ' + 'inches',
-                              style: TextStyle(
-                                fontSize: 12,
-                                
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isMediumSelected = true;
-                          isSmallSelected = false;
-                          isLargeSelected = false;
-                          factor = 1.5;
-                        });
-                      
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                        color: isMediumSelected ? Color.fromARGB(255, 240, 235, 222) : Color.fromARGB(255, 233, 148, 21),
-                        borderRadius: BorderRadius.circular(10)
-                        ),
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Medium',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            SizedBox(height: 5,),
-                            Text(
-                              '${category['medium_size']}' + ' ' + 'inches',
-                              style: TextStyle(
-                                fontSize: 12,
-                                
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                         setState(() {
-                            isLargeSelected = true;
-                            isSmallSelected = false;
-                            isMediumSelected = false;
-                          factor = 2.0;
-                        });
-                        
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                        color: isLargeSelected ? Color.fromARGB(255, 240, 235, 222) : Color.fromARGB(255, 233, 148, 21),
-                        borderRadius: BorderRadius.circular(10)
-                        ),
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Large',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isMediumSelected = true;
+                                isSmallSelected = false;
+                                isLargeSelected = false;
+                                factor = 1.5;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: isMediumSelected
+                                      ? Color.fromARGB(255, 240, 235, 222)
+                                      : Color.fromARGB(255, 233, 148, 21),
+                                  borderRadius: BorderRadius.circular(10)),
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Medium',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    '${category['medium_size']}' +
+                                        ' ' +
+                                        'inches',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            SizedBox(height: 5,),
-                            Text(
-                               '${category['large_size']}' + ' ' + 'inches',
-                              style: TextStyle(
-                                fontSize: 12,
-                               
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isLargeSelected = true;
+                                isSmallSelected = false;
+                                isMediumSelected = false;
+                                factor = 2.0;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: isLargeSelected
+                                      ? Color.fromARGB(255, 240, 235, 222)
+                                      : Color.fromARGB(255, 233, 148, 21),
+                                  borderRadius: BorderRadius.circular(10)),
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Large',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    '${category['large_size']}' +
+                                        ' ' +
+                                        'inches',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ) : Container(),
+                    )
+                  : Container(),
               SizedBox(
                 height: 20,
               ),
@@ -300,45 +305,57 @@ class _ItemDetailsState extends State<ItemDetails> {
                     Container(
                       margin: EdgeInsets.all(2),
                       padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white),
                       child: TextButton.icon(
-                          onPressed: () async{
-                            final SharedPreferences prefs = await SharedPreferences.getInstance();
+                          onPressed: () async {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
                             var token = prefs.getString('token') ?? '';
-                            if(token.isNotEmpty){
+                            if (token.isNotEmpty) {
                               final user = await DioProvider().getUser(token);
                               final userData = json.decode(user);
 
-                              var priceTotal = double.parse(product['price']) * quantity * factor;
+                              var priceTotal = double.parse(product['price']) *
+                                  quantity *
+                                  factor;
 
                               var productSize;
 
-                              if(factor == 1.0 && nullCheck){
+                              if (factor == 1.0 && nullCheck) {
                                 productSize = 12;
-                              }else if(factor == 1.5 && nullCheck ){
-                                 productSize = 14;
-                              }else if(factor == 2.0 && nullCheck){
+                              } else if (factor == 1.5 && nullCheck) {
+                                productSize = 14;
+                              } else if (factor == 2.0 && nullCheck) {
                                 productSize = 16;
-                              }else{
+                              } else {
                                 productSize = null;
                               }
-                              
-                              final response = await DioProvider().addToCart(userData['id'], product['id'], quantity, priceTotal, productSize, product['photo_path'],token);
 
-                              if(response){
-                                 MyApp.navigatorKey.currentState!.pushNamed('cart_page', arguments:{'showLeadingButton': showLeadingButton});
+                              final response = await DioProvider().addToCart(
+                                  userData['id'],
+                                  product['id'],
+                                  quantity,
+                                  priceTotal,
+                                  productSize,
+                                  product['photo_path'],
+                                  token);
 
-                              }else{
+                              if (response) {
+                                var newCart = await DioProvider()
+                                    .getUserCart(userData['id']);
+                                var authModel = Provider.of<AuthModel>(context,
+                                    listen: false);
+                                authModel.updateCart(json.decode(newCart));
+                                MyApp.navigatorKey.currentState!
+                                    .pushNamed('cart_page', arguments: {
+                                  'showLeadingButton': showLeadingButton
+                                });
+                              } else {
                                 print('Product already added to cart!');
                               }
-
-                             
-
-                            
-                            } 
-                            
-                            
-                            
-                            
+                            }
                           },
                           icon: FaIcon(
                             FontAwesomeIcons.cartPlus,
@@ -350,14 +367,13 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           )),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white),
                     )
                   ],
                 ),
               ),
-              SizedBox(height: 50,)
+              SizedBox(
+                height: 50,
+              )
             ],
           ),
         ),

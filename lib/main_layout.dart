@@ -21,7 +21,7 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final userData = ModalRoute.of(context)!.settings.arguments as Map;
+    // final userData = ModalRoute.of(context)!.settings.arguments as Map;
 
     return Scaffold(
       body: PageView(
@@ -32,7 +32,7 @@ class _MainLayoutState extends State<MainLayout> {
           });
         }),
         children: [
-          HomePage(userData: userData),
+          HomePage(),
           CartsPage(),
           OrdersPage(),
           BookingPage(),

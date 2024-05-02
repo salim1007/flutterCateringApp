@@ -117,7 +117,7 @@ class _LoginFormState extends State<LoginForm> {
                             auth.loginSuccess(userData);
 
                             MyApp.navigatorKey.currentState!
-                                .pushNamed('main_layout', arguments: userData);
+                                .pushNamed('main_layout'); // arguments: userData
                           });
                         }
                       }

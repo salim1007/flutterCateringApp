@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/card_item.dart';
 import 'package:food_delivery_app/main.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -24,9 +25,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> _getAllProducts() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token') ?? '';
-    var products = await DioProvider().getAllProducts(token);
+    var authModel = Provider.of<AuthModel>(context, listen: false);
+    var products = await DioProvider().getAllProducts(authModel.getAuthUserToken);
     setState(() {
       productData = json.decode(products);
       filteredProducts = List.from(productData);
@@ -83,7 +83,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   itemCount: filteredProducts.length,
                   itemBuilder: (BuildContext context, int index) {
-                    // Assuming each item in productData is of type Map<String, dynamic>
+                    // Assuming each item in filteredProducts is of type Map<String, dynamic>
                     Map<String, dynamic> product = filteredProducts[index];
                     return CardItem(product: product);
                   },

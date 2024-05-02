@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/button.dart';
 import 'package:food_delivery_app/main.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/models/date_time_convert.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,27 +24,27 @@ class _BookingPageState extends State<BookingPage> {
   int? _currentIndex;
   bool _dateSelected = false;
   bool _timeSelected = false;
-  String? token;
+  // String? token;
   int quantity = 1;
 
-  Map<dynamic, dynamic>? userData;
+  // Map<dynamic, dynamic>? userData;
 
   @override
   void initState() {
     super.initState();
-    _getToken();
+    // _getToken();
   }
 
-  Future<void> _getToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? '';
-    var user = await DioProvider().getUser(token!);
+  // Future<void> _getToken() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   token = prefs.getString('token') ?? '';
+  //   var user = await DioProvider().getUser(token!);
 
-    setState(() {
-      userData = json.decode(user);
-      print(userData!['id']);
-    });
-  }
+  //   setState(() {
+  //     userData = json.decode(user);
+  //     print(userData!['id']);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -209,16 +211,31 @@ class _BookingPageState extends State<BookingPage> {
                       height: 40,
                       title: "Book",
                       onPressed: () async {
+                        var authModel =
+                            Provider.of<AuthModel>(context, listen: false);
+
                         final getDate = ConvertDate.getDate(_currentDay);
                         final getTime = ConvertDate.getTime(_currentIndex!);
                         final getDay = ConvertDate.getDay(_currentDay.weekday);
 
-                        final response = await DioProvider().bookTable(getDate,
-                            getTime, getDay, userData!['id'], quantity, token!);
+                        final response = await DioProvider().bookTable(
+                            getDate,
+                            getTime,
+                            getDay,
+                            authModel.getAuthUserID,
+                            quantity,
+                            authModel.getAuthUserToken);
 
-                            if(response){
-                              MyApp.navigatorKey.currentState!.pushNamed('book_list');
-                            }
+                        if (response) {
+                          var bookings = await DioProvider().fetchBooks(
+                              authModel.getAuthUserID,
+                              authModel.getAuthUserToken);
+                          setState(() {
+                            authModel.updateBookings(json.decode(bookings));
+                          });
+                          MyApp.navigatorKey.currentState!
+                              .pushNamed('book_list');
+                        }
                       },
                       disable: _timeSelected && _dateSelected ? false : true,
                     )),

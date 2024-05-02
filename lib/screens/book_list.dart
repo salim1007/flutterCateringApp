@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/main.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class BookList extends StatefulWidget {
   const BookList({super.key});
@@ -16,14 +17,12 @@ class _BookListState extends State<BookList>
     with SingleTickerProviderStateMixin {
   String? token;
   List<dynamic> userBooks = [];
-  Map<dynamic, dynamic>? userData;
   TabController? _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _getBooks();
   }
 
   @override
@@ -32,23 +31,10 @@ class _BookListState extends State<BookList>
     super.dispose();
   }
 
-  Future<void> _getBooks() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? '';
-    var user = await DioProvider().getUser(token!);
-    setState(() {
-      userData = json.decode(user);
-      print(userData!['id']);
-    });
-
-    final books = await DioProvider().fetchBooks(userData!['id'], token!);
-    setState(() {
-      userBooks = json.decode(books);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    userBooks = Provider.of<AuthModel>(context, listen: false).getAuthBookings;
+
     return DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -70,8 +56,7 @@ class _BookListState extends State<BookList>
             ),
             leading: GestureDetector(
               onTap: () {
-                MyApp.navigatorKey.currentState!
-                    .pushNamed('main_layout', arguments: userData);
+                MyApp.navigatorKey.currentState!.pushNamed('main_layout');
               },
               child: Icon(FontAwesomeIcons.arrowLeft),
             ),
@@ -142,18 +127,25 @@ class _BookListState extends State<BookList>
                                   children: [
                                     TextButton(
                                         onPressed: () async {
-                                          final SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          var token =
-                                              prefs.getString('token') ?? '';
+                                          var authModel =
+                                              Provider.of<AuthModel>(context,
+                                                  listen: false);
 
                                           final response = await DioProvider()
-                                              .changeBookStatus('completed',
-                                                  item['id'], token);
+                                              .changeBookStatus(
+                                                  'completed',
+                                                  item['id'],
+                                                  authModel.getAuthUserToken);
 
                                           if (response) {
-                                            await _getBooks();
+                                            var bookings = await DioProvider()
+                                                .fetchBooks(
+                                                    authModel.getAuthUserID,
+                                                    authModel.getAuthUserToken);
+                                            setState(() {
+                                              authModel
+                                                  .updateBookings(json.decode(bookings));
+                                            });
                                             _tabController?.animateTo(1);
                                           }
                                         },
@@ -167,18 +159,22 @@ class _BookListState extends State<BookList>
                                     ),
                                     TextButton(
                                         onPressed: () async {
-                                          final SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          var token =
-                                              prefs.getString('token') ?? '';
-
+                                          var authModel =
+                                              Provider.of<AuthModel>(context,
+                                                  listen: false);
                                           final response = await DioProvider()
                                               .changeBookStatus('canceled',
-                                                  item['id'], token);
+                                                  item['id'], authModel.getAuthUserToken);
 
                                           if (response) {
-                                            await _getBooks();
+                                             var bookings = await DioProvider()
+                                                .fetchBooks(
+                                                    authModel.getAuthUserID,
+                                                    authModel.getAuthUserToken);
+                                            setState(() {
+                                              authModel
+                                                  .updateBookings(json.decode(bookings));
+                                            });
                                             _tabController?.animateTo(2);
                                           }
                                         },

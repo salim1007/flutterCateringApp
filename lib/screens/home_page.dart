@@ -3,84 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/card_item.dart';
 import 'package:food_delivery_app/main.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.userData});
+  const HomePage({super.key});
 
-  final Map<dynamic, dynamic> userData;
+  // final Map<dynamic, dynamic> userData;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String _searchText = '';
+  // String _searchText = '';
 
-  Map<dynamic, dynamic> userDetails = {};
+  Map<String, dynamic> userDetails = {};
+  List<dynamic> favList = [];
+  String currentAddress = '';
 
   bool isFirstLoaded = true;
   bool isLoading = false;
 
   List<dynamic> productDetails = [];
 
-  Position? _currentLocation;
-  late bool servicePermisiion = false;
-  late LocationPermission permission;
-  String _currentAddress = '';
+  
+
 
   @override
   void initState(){
     super.initState();
-    userDetails = widget.userData;
+    // userDetails = widget.userData;
     _getProducts();
-    _initializeLocation();
+   
      
   }
-
-
-Future<void> _initializeLocation() async {
-  _currentLocation = await _getCurrentLocation();
-  await _getAddressFromCoordinates();
-  print(_currentAddress);
-}
-
-  Future<Position> _getCurrentLocation() async{
-    servicePermisiion = await Geolocator.isLocationServiceEnabled();
-    if(servicePermisiion == false){
-      print('Service disabled!');
-
-    }
-
-    permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied){
-      permission = await Geolocator.requestPermission();
-
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
-
-  _getAddressFromCoordinates() async{
-    try{
-      List<Placemark> placemarks = await placemarkFromCoordinates(_currentLocation!.latitude, _currentLocation!.longitude);
-      Placemark place = placemarks[0];
-
-      setState(() {
-        _currentAddress = '${place.street} - ${place.subLocality}, ${place.locality}';
-        print(_currentAddress);
-       
-
-      });
-
-    }catch(error){
-      return error;
-    }
-  }
-
-   
 
   Future<void> _getProducts() async {
     final productInit = await DioProvider().getProducts('Main Course');
@@ -91,6 +49,15 @@ Future<void> _initializeLocation() async {
 
   @override
   Widget build(BuildContext context) {
+
+    userDetails = Provider.of<AuthModel>(context, listen: false).getUser;
+    favList = Provider.of<AuthModel>(context, listen: false).getFav;
+    currentAddress = Provider.of<AuthModel>(context, listen: false).getCurrentLocation;
+
+     print('user data is: $userDetails');
+     print('favlist is data is: $favList');
+
+
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -122,7 +89,7 @@ Future<void> _initializeLocation() async {
                   SizedBox(
                     width: 5,
                   ),
-                  _currentAddress == '' ? 
+                  currentAddress == '' ? 
                   Container(
                     height: 20,
                     width: 20,
@@ -132,7 +99,7 @@ Future<void> _initializeLocation() async {
                     ),
                   ) :
                   Text(
-                   '${_currentAddress}',
+                   currentAddress,
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,),
                   )
                 ],
@@ -158,7 +125,7 @@ Future<void> _initializeLocation() async {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          print('salim');
+                          print('book a table');
                         },
                         child: Container(
                           child: Column(
@@ -178,7 +145,7 @@ Future<void> _initializeLocation() async {
                                 width: double.infinity,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Add this line
+                                      10), 
                                   child: Image.asset(
                                     'assets/pizza3.jpg',
                                     fit: BoxFit.cover,
@@ -224,10 +191,7 @@ Future<void> _initializeLocation() async {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: <Widget>[
-                                      // FaIcon(
-                                      //   categories[index]['icon'],
-                                      //   color: Colors.white,
-                                      // ),
+                                    
                                       const SizedBox(
                                         width: 20,
                                       ),

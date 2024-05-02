@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -18,27 +20,14 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   void initState() {
     super.initState();
-    _getUserOrders();
-  }
-
-  Future<void> _getUserOrders() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token') ?? '';
-    if (token.isNotEmpty) {
-      var user = await DioProvider().getUser(token);
-      final userData = json.decode(user);
-      var orders = await DioProvider().getAuthUserOrders(userData['id'], token);
-     if (orders != null && mounted) {
-      setState(() {
-        ordersList = json.decode(orders);
-        print(ordersList);
-      });
-    }
-    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
+
+    ordersList = Provider.of<AuthModel>(context, listen: false).getUserOrders;
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Orders'),
@@ -67,7 +56,7 @@ class _OrdersPageState extends State<OrdersPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Row(
+                            const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
@@ -173,7 +162,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                         return AlertDialog.adaptive(
                                           backgroundColor:
                                               Color.fromARGB(255, 223, 219, 214),
-                                          title: Center(
+                                          title: const Center(
                                             child: Text(
                                               'Track your Order',
                                               style: TextStyle(

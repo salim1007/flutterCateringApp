@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_delivery_app/components/timeline.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
-import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
@@ -20,12 +17,10 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   void initState() {
     super.initState();
-    
   }
 
   @override
   Widget build(BuildContext context) {
-
     ordersList = Provider.of<AuthModel>(context, listen: false).getUserOrders;
 
     return Scaffold(
@@ -80,10 +75,12 @@ class _OrdersPageState extends State<OrdersPage> {
                               ],
                             ),
                           ]
-                            ..addAll(orderItem['prod_list'].map<Widget>((product) {
+                            ..addAll(
+                                orderItem['prod_list'].map<Widget>((product) {
                               return Column(children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -137,7 +134,8 @@ class _OrdersPageState extends State<OrdersPage> {
                                 Text(
                                   'Total Amount: ${orderItem['total_amount']}/=',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w700, fontSize: 10),
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 10),
                                 ),
                               ],
                             )),
@@ -159,218 +157,216 @@ class _OrdersPageState extends State<OrdersPage> {
                                   showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return AlertDialog.adaptive(
-                                          backgroundColor:
-                                              Color.fromARGB(255, 223, 219, 214),
-                                          title: const Center(
-                                            child: Text(
-                                              'Track your Order',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
-                                            ),
-                                          ),
-                                          titleTextStyle: TextStyle(
-                                              fontSize: 16, color: Colors.black),
-                                          content: Container(
-                                            height: 400,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Container(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      orderItem['status'] ==
-                                                              'Placed'
-                                                          ? Text(
-                                                              'Time: ${orderItem['track_time']}Hrs',
-                                                              style: TextStyle(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight.bold,
+                                        return Dialog(
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: Color.fromARGB(
+                                                      255, 233, 224, 211),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20)),
+                                              height: 670,
+                                              child: Column(children: [
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                const Text(
+                                                  'Track Your Order',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                OrderTimeLine(
+                                                    isFirst: true,
+                                                    isLast: false,
+                                                    isPast: true,
+                                                    progressCard: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
+                                                          'Placed',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        orderItem['status'] ==
+                                                                'Placed'
+                                                            ? Text(
+                                                                '${orderItem['track_time']} Hrs',
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              )
+                                                            : const Text(
+                                                                'Your order has been placed!',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12),
                                                               ),
-                                                            )
-                                                          : Text(''),
-                                                      Container(
-                                                        width: 110,
-                                                        padding: EdgeInsets.all(10),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(10),
-                                                            color: orderItem[
-                                                                            'status'] ==
-                                                                        'Placed' ||
-                                                                    orderItem[
-                                                                            'status'] ==
-                                                                        'confirmed' ||
-                                                                    orderItem[
-                                                                            'status'] ==
-                                                                        'on_delivery' ||
-                                                                    orderItem[
-                                                                            'status'] ==
-                                                                        'delivered'
-                                                                ? Colors
-                                                                    .orangeAccent
-                                                                : Colors.grey),
-                                                        child: Text(
-                                                          'Order Placed',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 130),
-                                                  child: CustomPaint(
-                                                    size: Size(10, 80),
-                                                    painter: LinePainter(
-                                                        orderItem['status']),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      orderItem['status'] ==
-                                                              'confirmed'
-                                                          ? Text(
-                                                              'Time: ${orderItem['track_time']}Hrs')
-                                                          : Text(''),
-                                                      Container(
-                                                        width: 110,
-                                                        padding: EdgeInsets.all(10),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(10),
-                                                            color: orderItem[
-                                                                            'status'] ==
-                                                                        'confirmed' ||
-                                                                    orderItem[
-                                                                            'status'] ==
-                                                                        'on_delivery' ||
-                                                                    orderItem[
-                                                                            'status'] ==
-                                                                        'delivered'
-                                                                ? Colors
-                                                                    .orangeAccent
-                                                                : Colors.grey),
-                                                        child: Text(
+                                                      ],
+                                                    )),
+                                                OrderTimeLine(
+                                                    isFirst: false,
+                                                    isLast: false,
+                                                    isPast: orderItem[
+                                                                    'status'] ==
+                                                                'confirmed' ||
+                                                            orderItem[
+                                                                    'status'] ==
+                                                                'on_delivery' ||
+                                                            orderItem[
+                                                                    'status'] ==
+                                                                'delivered'
+                                                        ? true
+                                                        : false,
+                                                    progressCard: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
                                                           'Confirmed',
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 130),
-                                                  child: CustomPaint(
-                                                    size: Size(10, 80),
-                                                    painter: LinePainter2(
-                                                        orderItem['status']),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      orderItem['status'] ==
-                                                              'on_delivery'
-                                                          ? Text(
-                                                              'Time: ${orderItem['track_time']}Hrs')
-                                                          : Text(''),
-                                                      Container(
-                                                        width: 110,
-                                                        padding: EdgeInsets.all(10),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(10),
-                                                            color: orderItem[
-                                                                            'status'] ==
+                                                        orderItem['status'] ==
+                                                                'confirmed'
+                                                            ? Text(
+                                                                '${orderItem['track_time']} Hrs',
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12),
+                                                              )
+                                                            : orderItem['status'] ==
                                                                         'on_delivery' ||
                                                                     orderItem[
                                                                             'status'] ==
                                                                         'delivered'
-                                                                ? Colors
-                                                                    .orangeAccent
-                                                                : Colors.grey),
-                                                        child: Text(
+                                                                ? const Text(
+                                                                    'Your order has been confirmed!',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            12))
+                                                                : const Text(
+                                                                    'Awaiting...'),
+                                                      ],
+                                                    )),
+                                                OrderTimeLine(
+                                                    isFirst: false,
+                                                    isLast: false,
+                                                    isPast: orderItem[
+                                                                    'status'] ==
+                                                                'on_delivery' ||
+                                                            orderItem[
+                                                                    'status'] ==
+                                                                'delivered'
+                                                        ? true
+                                                        : false,
+                                                    progressCard: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
                                                           'On Delivery',
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 130),
-                                                  child: CustomPaint(
-                                                    size: Size(10, 80),
-                                                    painter: LinePainter3(
-                                                        orderItem['status']),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      orderItem['status'] ==
-                                                              'delivered'
-                                                          ? Text(
-                                                              'Time: ${orderItem['track_time']}Hrs')
-                                                          : Text(''),
-                                                      Container(
-                                                        width: 110,
-                                                        padding: EdgeInsets.all(10),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(10),
-                                                            color: orderItem[
-                                                                        'status'] ==
+                                                        orderItem['status'] ==
+                                                                'on_delivery'
+                                                            ? Text(
+                                                                '${orderItem['track_time']} Hrs',
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12),
+                                                              )
+                                                            : orderItem['status'] ==
                                                                     'delivered'
-                                                                ? Colors
-                                                                    .orangeAccent
-                                                                : Colors.grey),
-                                                        child: Text(
+                                                                ? const Text(
+                                                                    'Your order has been confirmed!',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            12))
+                                                                : const Text(
+                                                                    'Awaiting...'),
+                                                      ],
+                                                    )),
+                                                OrderTimeLine(
+                                                    isFirst: false,
+                                                    isLast: true,
+                                                    isPast:
+                                                        orderItem['status'] ==
+                                                                'delivered'
+                                                            ? true
+                                                            : false,
+                                                    progressCard: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
                                                           'Delivered',
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                                        orderItem['status'] ==
+                                                                'delivered'
+                                                            ? Text(
+                                                                '${orderItem['track_time']} Hrs',
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12),
+                                                              )
+                                                            : const Text(
+                                                                'Awaiting...'),
+                                                      ],
+                                                    )),
+                                              ])),
                                         );
                                       });
                                 },
-                                child: Text(
+                                child: const Text(
                                   'Track Order',
-                                  style:
-                                      TextStyle(color: Colors.black, fontSize: 12),
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 12),
                                 ),
                               ))
                         ],
@@ -383,52 +379,4 @@ class _OrdersPageState extends State<OrdersPage> {
           ),
         ));
   }
-}
-
-class LinePainter extends CustomPainter {
-  final String status;
-  LinePainter(this.status);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = (status == 'confirmed') ? Colors.orangeAccent : Colors.grey
-      ..strokeWidth = 2;
-    canvas.drawLine(Offset(0, 0), Offset(0, size.height), paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
-
-class LinePainter2 extends CustomPainter {
-  final String status;
-  LinePainter2(this.status);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = (status == 'on_delivery') ? Colors.orangeAccent : Colors.grey
-      ..strokeWidth = 2;
-    canvas.drawLine(Offset(0, 0), Offset(0, size.height), paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
-
-class LinePainter3 extends CustomPainter {
-  final String status;
-  LinePainter3(this.status);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = (status == 'delivered') ? Colors.orangeAccent : Colors.grey
-      ..strokeWidth = 2;
-    canvas.drawLine(Offset(0, 0), Offset(0, size.height), paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

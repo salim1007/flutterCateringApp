@@ -5,9 +5,10 @@ import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 
 class CardItem extends StatefulWidget {
-  const CardItem({Key? key, required this.product});
+  const CardItem({Key? key, required this.product ,required this.isFav});
 
   final Map<String, dynamic> product;
+  final bool isFav;
 
   @override
   State<CardItem> createState() => _CardItemState();
@@ -30,7 +31,7 @@ class _CardItemState extends State<CardItem> {
           
           print(category);
   
-          MyApp.navigatorKey.currentState!.pushNamed('item_details', arguments: {'product': widget.product, 'category':category});
+          MyApp.navigatorKey.currentState!.pushNamed('item_details', arguments: {'product': widget.product, 'category':category, });
         },
         child: Container(
           height: 300,

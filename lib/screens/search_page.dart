@@ -17,6 +17,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   List<dynamic> productData = [];
   List<dynamic> filteredProducts = [];
+  List<dynamic> favlist = [];
 
   @override
   void initState() {
@@ -53,6 +54,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    favlist = Provider.of<AuthModel>(context, listen: false).getFav;
     return SafeArea(
         child: Scaffold(
       body: Column(
@@ -85,7 +87,7 @@ class _SearchPageState extends State<SearchPage> {
                   itemBuilder: (BuildContext context, int index) {
                     // Assuming each item in filteredProducts is of type Map<String, dynamic>
                     Map<String, dynamic> product = filteredProducts[index];
-                    return CardItem(product: product);
+                    return CardItem(product: product, isFav: favlist.contains(productData[index]['id']));
                   },
                 ),
               ),

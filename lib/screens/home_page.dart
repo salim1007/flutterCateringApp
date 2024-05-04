@@ -216,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       GridView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: MediaQuery.of(context).size.width /
@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                           // Assuming each item in productDetails is of type Map<String, dynamic>
                           Map<String, dynamic> product =
                               productDetails[index] as Map<String, dynamic>;
-                          return CardItem(product: product);
+                          return CardItem(product: product, isFav: favList.contains(product['id']));
                         },
                       ),
                     ],

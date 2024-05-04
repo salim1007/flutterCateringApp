@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthModel extends ChangeNotifier {
   bool _isLogin = false;
   Map<String, dynamic> user = {};
-  List<Map<String, dynamic>> favProduct = [];
+  List<Map<String, dynamic>> favProducts = [];
   List<dynamic> _fav = [];
   int userId = 0;
   String token = '';
@@ -75,17 +75,17 @@ class AuthModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Map<String, dynamic>> get getFavProduct {
-    favProduct.clear();
+  List<Map<String, dynamic>> get getFavProducts {
+    favProducts.clear();
 
     for (var num in _fav) {
       for (var prod in user['products']) {
         if (num == prod['id']) {
-          favProduct.add(prod);
+          favProducts.add(prod);
         }
       }
     }
-    return favProduct;
+    return favProducts;
   }
 
   Future<void> _initializeLocation() async {
@@ -133,14 +133,17 @@ class AuthModel extends ChangeNotifier {
   void updateCart(List<dynamic> newCart) {
     authCart = newCart;
     updateTotalCartPrice();
+    notifyListeners();
   }
 
   void updateOrder(List<dynamic> newOrder){
     authOrders = newOrder;
+    notifyListeners();
   }
   
   void updateBookings(List<dynamic> newBookings){
     authBookings = newBookings;
+    notifyListeners();
   }
 
   void loginSuccess(Map<String, dynamic> userData) async {

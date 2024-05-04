@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
@@ -23,14 +21,20 @@ class _ItemDetailsState extends State<ItemDetails> {
   bool isMediumSelected = false;
   bool isLargeSelected = false;
   double factor = 1.0;
+  List<dynamic> favList =[];
 
   bool showLeadingButton = true;
+
 
   @override
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)!.settings.arguments as Map;
     var product = args['product'];
     var category = args['category'];
+   
+   
+
+    favList = Provider.of<AuthModel>(context, listen: false).getFav;
 
     final nullCheck = category['small_size'] != null &&
         category['medium_size'] != null &&
@@ -41,16 +45,37 @@ class _ItemDetailsState extends State<ItemDetails> {
       appBar: AppBar(
         backgroundColor: Colors.orangeAccent,
         actions: [
-          Padding(
-            child: GestureDetector(
-              onTap: () {},
-              child: Icon(
-                Icons.favorite_outline,
-                color: Colors.red,
-              ),
-            ),
-            padding: EdgeInsets.only(right: 12),
-          )
+          Consumer<AuthModel>(builder: (context, auth, child) {
+            bool isFav = auth.getFav.contains(product['id']);
+            return Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: GestureDetector(
+                  onTap: () async {
+                    
+                    final list = auth.getFav;
+
+                    if (list.contains(product['id'])) {
+                      list.removeWhere((id) => id == product['id']);
+                    } else {
+                      list.add(product['id']);
+                    }
+
+                    auth.setFavList(list);
+
+                    var response = await DioProvider()
+                        .storeFavProdList(list, auth.getAuthUserToken);
+                    if (response) {
+                      setState(() {
+                        isFav = !isFav;
+                      });
+                    }
+                  },
+                  child: FaIcon(
+                    isFav ?  Icons.favorite_rounded : Icons.favorite_outline,
+                    color: Colors.red,
+                  )),
+            );
+          })
         ],
       ),
       body: SingleChildScrollView(

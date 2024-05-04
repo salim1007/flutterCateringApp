@@ -182,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                                 });
                               },
                               child: Card(
-                                margin: const EdgeInsets.all(0),
+                                margin: const EdgeInsets.all(5),
                                 color: Colors.orangeAccent,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(

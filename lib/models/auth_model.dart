@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthModel extends ChangeNotifier {
@@ -13,7 +14,7 @@ class AuthModel extends ChangeNotifier {
   List<dynamic> _fav = [];
   int userId = 0;
   String token = '';
-
+  String todaysDate = DateFormat('M/d/y').format(DateTime.now());
 
   Position? _currentLocation;
   late bool servicePermisiion = false;
@@ -26,19 +27,21 @@ class AuthModel extends ChangeNotifier {
   List<dynamic> authBookings = [];
   List<dynamic> systemProducts = [];
 
-  List<dynamic> get getSystemProducts{
+
+
+  List<dynamic> get getSystemProducts {
     return systemProducts;
   }
 
-  String get getAuthUserToken{
+  String get getAuthUserToken {
     return token;
   }
 
-  int get getAuthUserID{
+  int get getAuthUserID {
     return userId;
   }
 
-  List<dynamic> get getAuthBookings{
+  List<dynamic> get getAuthBookings {
     return authBookings;
   }
 
@@ -54,7 +57,7 @@ class AuthModel extends ChangeNotifier {
     return _currentAddress;
   }
 
-  List<dynamic> get getUserOrders{
+  List<dynamic> get getUserOrders {
     return authOrders;
   }
 
@@ -136,12 +139,12 @@ class AuthModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateOrder(List<dynamic> newOrder){
+  void updateOrder(List<dynamic> newOrder) {
     authOrders = newOrder;
     notifyListeners();
   }
-  
-  void updateBookings(List<dynamic> newBookings){
+
+  void updateBookings(List<dynamic> newBookings) {
     authBookings = newBookings;
     notifyListeners();
   }
@@ -155,7 +158,7 @@ class AuthModel extends ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token') ?? '';
-    
+
     var products = await DioProvider().getAllProducts(token);
     var productDetails = json.decode(products);
 

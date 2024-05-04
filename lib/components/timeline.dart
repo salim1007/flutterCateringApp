@@ -30,7 +30,7 @@ class OrderTimeLine extends StatelessWidget {
           indicatorStyle: IndicatorStyle(
               width: 30,
               color: isFirst == true || isPast == true ? Colors.orangeAccent : Colors.grey,
-              iconStyle: IconStyle(iconData: Icons.done, color: Colors.white)),
+              iconStyle: isFirst == true || isPast == true ? IconStyle(iconData: Icons.done, color: Colors.white) : null),
           endChild: ProgressCard(
             isPast: isPast,
             child: progressCard,

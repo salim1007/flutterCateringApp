@@ -30,7 +30,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.arrow_back_ios),
+                    Icon(Icons.arrow_back_ios_rounded),
                     Text(
                       'Your Favourites',
                       style:

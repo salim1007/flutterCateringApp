@@ -8,7 +8,6 @@ import 'package:food_delivery_app/models/date_time_convert.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
@@ -24,28 +23,9 @@ class _BookingPageState extends State<BookingPage> {
   int? _currentIndex;
   bool _dateSelected = false;
   bool _timeSelected = false;
-  // String? token;
   int quantity = 1;
 
-  // Map<dynamic, dynamic>? userData;
-
-  @override
-  void initState() {
-    super.initState();
-    // _getToken();
-  }
-
-  // Future<void> _getToken() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   token = prefs.getString('token') ?? '';
-  //   var user = await DioProvider().getUser(token!);
-
-  //   setState(() {
-  //     userData = json.decode(user);
-  //     print(userData!['id']);
-  //   });
-  // }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

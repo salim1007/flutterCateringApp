@@ -16,7 +16,7 @@ class FavCard extends StatelessWidget {
           padding: EdgeInsets.all(10),
           margin: EdgeInsets.all(18),
           decoration: BoxDecoration(
-              color: Color.fromARGB(255, 235, 233, 232),
+              color: Color.fromARGB(255, 233, 224, 211),
               borderRadius: BorderRadius.circular(20)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,7 +48,7 @@ class FavCard extends StatelessWidget {
                             style: TextStyle(fontSize: 12),
                           ),
                           Text(
-                            productData['price'],
+                            '${productData['price']}/=',
                             style: TextStyle(fontSize: 12),
                           ),
                           Text(

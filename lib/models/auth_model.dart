@@ -15,18 +15,19 @@ class AuthModel extends ChangeNotifier {
   int userId = 0;
   String token = '';
   String todaysDate = DateFormat('M/d/y').format(DateTime.now());
+  
 
   Position? _currentLocation;
   late bool servicePermisiion = false;
   late LocationPermission permission;
   String _currentAddress = '';
+  String _staticAddress = '';
 
   List<dynamic> authCart = [];
   double totalCartPrice = 0;
   List<dynamic> authOrders = [];
   List<dynamic> authBookings = [];
   List<dynamic> systemProducts = [];
-
 
 
   List<dynamic> get getSystemProducts {
@@ -55,6 +56,10 @@ class AuthModel extends ChangeNotifier {
 
   String get getCurrentLocation {
     return _currentAddress;
+  }
+
+   String get getStaticLocation {
+    return _staticAddress;
   }
 
   List<dynamic> get getUserOrders {
@@ -119,6 +124,7 @@ class AuthModel extends ChangeNotifier {
 
       _currentAddress =
           '${place.street} - ${place.subLocality}, ${place.locality}';
+          _staticAddress = '${place.locality} - ${place.country}';
     } catch (error) {
       return error;
     }

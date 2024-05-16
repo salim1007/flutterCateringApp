@@ -325,4 +325,37 @@ class DioProvider {
       return error.toString();
     }
   }
+
+  Future<dynamic> rateProduct(double ratingValue, int userId, int prodId, String token) async{
+    try{
+      var response = await Dio().post('http://127.0.0.1:8000/api/rateProduct',
+      data: {'user_id': userId,'prod_id':prodId, 'rate_value': ratingValue},
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      if(response.statusCode == 200 || response.statusCode == 201){
+        return true;
+      }else{
+        return false;
+      }
+
+    }catch(error){
+      return error.toString();
+    }
+  }
+
+  Future<dynamic> updateProfile(int userId, String email, String phone, String address, String token) async{
+    try{
+      var response = await Dio().put('http://127.0.0.1:8000/api/updateProfile',
+      data: {'user_id':userId, 'email':email, 'phone':phone, 'address':address},
+      options: Options(headers: {'Authorization': 'Bearer $token'})
+      );
+      if(response.statusCode == 200){
+        return true;
+      }else{
+        return false;
+      }
+    }catch(error){
+      return error.toString();
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
@@ -15,6 +16,7 @@ class CartsPage extends StatefulWidget {
 }
 
 class _CartsPageState extends State<CartsPage> {
+  TextEditingController _addressController = TextEditingController();
   int qty = 1;
 
   bool showLeading = false;
@@ -22,12 +24,16 @@ class _CartsPageState extends State<CartsPage> {
   @override
   void initState() {
     super.initState();
+    var authModel = Provider.of<AuthModel>(context, listen: false);
+    _addressController = TextEditingController(
+        text: authModel.user['user_details']['address'] ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map?;
-    bool showLeadingBtn = args != null ? args['showLeadingButton'] ?? false : false;
+    bool showLeadingBtn =
+        args != null ? args['showLeadingButton'] ?? false : false;
     setState(() {
       showLeading = showLeadingBtn;
     });
@@ -244,12 +250,16 @@ class _CartsPageState extends State<CartsPage> {
                                       .deleteCartProduct(userData['id'],
                                           cartItem['prod_id'], token);
                                   if (response) {
-                                      var updatedCart = await DioProvider().getUserCart(userData['id']);
-                                      var authModel = Provider.of<AuthModel>(context, listen: false);
-                                      setState(() {
-                                        authModel.updateCart(json.decode(updatedCart));
-                                      });
-                                      print('prod deleted');
+                                    var updatedCart = await DioProvider()
+                                        .getUserCart(userData['id']);
+                                    var authModel = Provider.of<AuthModel>(
+                                        context,
+                                        listen: false);
+                                    setState(() {
+                                      authModel
+                                          .updateCart(json.decode(updatedCart));
+                                    });
+                                    print('prod deleted');
                                   }
                                 }
                               },
@@ -291,16 +301,16 @@ class _CartsPageState extends State<CartsPage> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
+                                titlePadding: EdgeInsets.all(25),
                                 title: const Text(
                                   'You are about to place an Order!',
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(
-                                          255, 219, 135, 10)),
+                                      color: Color.fromARGB(255, 219, 135, 10)),
                                 ),
                                 content: Container(
-                                  height: 200,
+                                  height: 250,
                                   child: Column(
                                     children: [
                                       const Text(
@@ -322,71 +332,67 @@ class _CartsPageState extends State<CartsPage> {
                                         'Delivery Location',
                                         style: TextStyle(fontSize: 16),
                                       ),
-                                      Text(
-                                        currentLocation,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      TextFormField(
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                        controller: _addressController,
+                                        keyboardType:
+                                            TextInputType.streetAddress,
+                                        cursorColor: Colors.orangeAccent,
+                                        textAlign: TextAlign.center,
                                       ),
                                       const SizedBox(
                                         height: 20,
                                       ),
                                       TextButton(
                                           onPressed: () async {
-                                            final SharedPreferences prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            var token =
-                                                prefs.getString('token') ?? '';
-                                            if (token.isNotEmpty) {
-                                              var user = await DioProvider()
-                                                  .getUser(token);
-                                              final userData =
-                                                  json.decode(user);
+                                            var authModel =
+                                                Provider.of<AuthModel>(context,
+                                                    listen: false);
 
-                                              final response =
-                                                  await DioProvider()
-                                                      .placeOrder(
-                                                          userData['id'],
-                                                          authCart,
-                                                          totalCartPrice,
-                                                          currentLocation,
-                                                          token);
+                                            var user = await DioProvider()
+                                                .getUser(
+                                                    authModel.getAuthUserToken);
+                                            final userData = json.decode(user);
 
-                                              print(response);
-                                              if (response) {
-                                                var newOrder =
+                                            final response = await DioProvider()
+                                                .placeOrder(
+                                                    userData['id'],
+                                                    authCart,
+                                                    totalCartPrice,
+                                                    _addressController.text,
+                                                    authModel.getAuthUserToken);
+
+                                            print(response);
+                                            if (response) {
+                                              var newOrder = await DioProvider()
+                                                  .getAuthUserOrders(
+                                                      userData['id'],
+                                                      authModel
+                                                          .getAuthUserToken);
+
+                                              authModel.updateOrder(
+                                                  json.decode(newOrder));
+
+                                              var isDeleted = await DioProvider()
+                                                  .deleteUserCart(
+                                                      userData['id'],
+                                                      authModel
+                                                          .getAuthUserToken);
+                                              if (isDeleted == true) {
+                                                var newCartData =
                                                     await DioProvider()
-                                                        .getAuthUserOrders(
-                                                            userData['id'],
-                                                            token);
+                                                        .getUserCart(
+                                                            userData['id']);
 
-                                                var authModel =
-                                                    Provider.of<AuthModel>(
-                                                        context,
-                                                        listen: false);
+                                                setState(() {
+                                                  authModel.updateCart(
+                                                      json.decode(newCartData));
+                                                });
 
-                                                authModel.updateOrder(
-                                                    json.decode(newOrder));
-
-                                                var isDeleted =
-                                                    await DioProvider()
-                                                        .deleteUserCart(
-                                                            userData['id'],
-                                                            token);
-                                                if (isDeleted == true) {
-                                                  var newCartData = await DioProvider().getUserCart(userData['id']);
-                                                  var authModel = Provider.of<AuthModel>(context, listen: false);
-                                                  setState(() {
-                                                    authModel.updateCart(json.decode(newCartData));
-                                                  });
-
-                                                  print('data deleted!');
-                                                }
-                                                MyApp.navigatorKey.currentState!
-                                                    .pushNamed('orders_page');
+                                                print('data deleted!');
                                               }
+                                              MyApp.navigatorKey.currentState!
+                                                  .pushNamed('orders_page');
                                             }
                                           },
                                           child: Container(

@@ -21,7 +21,6 @@ class AuthModel extends ChangeNotifier {
   late bool servicePermisiion = false;
   late LocationPermission permission;
   String _currentAddress = '';
-  String _staticAddress = '';
 
   List<dynamic> authCart = [];
   double totalCartPrice = 0;
@@ -58,9 +57,6 @@ class AuthModel extends ChangeNotifier {
     return _currentAddress;
   }
 
-   String get getStaticLocation {
-    return _staticAddress;
-  }
 
   List<dynamic> get getUserOrders {
     return authOrders;
@@ -124,7 +120,7 @@ class AuthModel extends ChangeNotifier {
 
       _currentAddress =
           '${place.street} - ${place.subLocality}, ${place.locality}';
-          _staticAddress = '${place.locality} - ${place.country}';
+          
     } catch (error) {
       return error;
     }
@@ -152,6 +148,11 @@ class AuthModel extends ChangeNotifier {
 
   void updateBookings(List<dynamic> newBookings) {
     authBookings = newBookings;
+    notifyListeners();
+  }
+
+  void updateUser(Map<String, dynamic> newUserData){
+    user = newUserData;
     notifyListeners();
   }
 

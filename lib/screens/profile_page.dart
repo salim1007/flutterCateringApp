@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:food_delivery_app/components/edit_form.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:provider/provider.dart';
 
@@ -20,16 +19,27 @@ class _ProfilePageState extends State<ProfilePage> {
             automaticallyImplyLeading: false,
             backgroundColor: Colors.orangeAccent,
             actions: [
-              Padding(
-                  padding: EdgeInsets.only(right: 12),
-                  child: GestureDetector(
-                    onTap: () {
-                      print('object');
-                    },
-                    child: Icon(
-                      Icons.edit,
-                    ),
-                  ))
+              Consumer<AuthModel>(builder: (context, auth, child) {
+                return Padding(
+                    padding: EdgeInsets.only(right: 12),
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                  insetAnimationCurve: Curves.easeInOut,
+                                  insetAnimationDuration:
+                                      const Duration(milliseconds: 500),
+                                  insetPadding: EdgeInsets.all(30),
+                                  child: EditForm(email: auth.user['email'], phone: auth.user['phone'], address: auth.user['user_details']['address'] ?? '',));
+                            });
+                      },
+                      child: Icon(
+                        Icons.edit,
+                      ),
+                    ));
+              })
             ],
           ),
           body: Consumer<AuthModel>(builder: (context, auth, child) {
@@ -69,7 +79,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 if (auth.getUser['profile_photo_path'] == null)
                                   Center(
                                     child: Text(
-                                      auth.getUser['name'].substring(0, 1).toUpperCase(),
+                                      auth.getUser['name']
+                                          .substring(0, 1)
+                                          .toUpperCase(),
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 48,
@@ -111,7 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         'Address',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(auth.getStaticLocation),
+                      auth.user['user_details']['address'] != null ?
+                      Text(auth.user['user_details']['address']) : const Text(''),
                     ],
                   ),
                 ),

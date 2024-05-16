@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // String _searchText = '';
+  
 
   Map<String, dynamic> userDetails = {};
   List<dynamic> favList = [];
@@ -34,7 +34,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState(){
     super.initState();
-    // userDetails = widget.userData;
     _getProducts();
    
      

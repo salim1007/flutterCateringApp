@@ -6,6 +6,7 @@ import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ItemDetails extends StatefulWidget {
@@ -21,18 +22,23 @@ class _ItemDetailsState extends State<ItemDetails> {
   bool isMediumSelected = false;
   bool isLargeSelected = false;
   double factor = 1.0;
-  List<dynamic> favList =[];
+  List<dynamic> favList = [];
 
   bool showLeadingButton = true;
 
+  Future<void> submitRating(
+      double rating, int userID, int productID, String token) async {
+    var response =
+        await DioProvider().rateProduct(rating, userID, productID, token);
+
+    if (response == true) {}
+  }
 
   @override
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)!.settings.arguments as Map;
     var product = args['product'];
     var category = args['category'];
-   
-   
 
     favList = Provider.of<AuthModel>(context, listen: false).getFav;
 
@@ -51,7 +57,6 @@ class _ItemDetailsState extends State<ItemDetails> {
               padding: EdgeInsets.only(right: 12),
               child: GestureDetector(
                   onTap: () async {
-                    
                     final list = auth.getFav;
 
                     if (list.contains(product['id'])) {
@@ -71,7 +76,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                     }
                   },
                   child: FaIcon(
-                    isFav ?  Icons.favorite_rounded : Icons.favorite_outline,
+                    isFav ? Icons.favorite_rounded : Icons.favorite_outline,
                     color: Colors.red,
                   )),
             );
@@ -236,6 +241,64 @@ class _ItemDetailsState extends State<ItemDetails> {
               SizedBox(
                 height: 20,
               ),
+              Consumer<AuthModel>(builder: (context, auth, child) {
+                return Container(
+                    child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 240, 235, 222),
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Colors.orangeAccent)))),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return RatingDialog(
+                              title: Text(
+                                product['product_name'],
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              message: Text(
+                                'Please help us rate ${product['product_name']}',
+                                style: TextStyle(fontSize: 13),
+                                textAlign: TextAlign.center,
+                              ),
+                              image: ClipRect(
+                                child: Image.network(
+                                  height: 80,
+                                  'http://127.0.0.1:8000/storage/${product['photo_path']}',
+                                ),
+                              ),
+                              initialRating: 1.0,
+                              enableComment: false,
+                              submitButtonText: 'Submit',
+                              submitButtonTextStyle: TextStyle(color: Colors.black,fontSize: 16, fontWeight: FontWeight.bold),
+                              onSubmitted: (ratingResponse) {
+                                submitRating(
+                                    ratingResponse.rating,
+                                    auth.getAuthUserID,
+                                    product['id'],
+                                    auth.getAuthUserToken);
+                              });
+                        });
+                  },
+                  child: Text(
+                    'Rate product',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 12),
+                  ),
+                ));
+              }),
+              SizedBox(
+                height: 15,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -252,7 +315,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(20),
                                 bottomLeft: Radius.circular(20)),
-                            color: Colors.white),
+                            color: Color.fromARGB(255, 240, 235, 222)),
                         height: 30,
                         child: TextButton(
                             onPressed: () {
@@ -272,14 +335,15 @@ class _ItemDetailsState extends State<ItemDetails> {
                       Text(
                         '$quantity',
                         style: TextStyle(
-                            backgroundColor: Colors.white, fontSize: 21),
+                            backgroundColor: Color.fromARGB(255, 240, 235, 222),
+                            fontSize: 21),
                       ),
                       Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(20),
                                 bottomRight: Radius.circular(20)),
-                            color: Colors.white),
+                            color: Color.fromARGB(255, 240, 235, 222)),
                         height: 30,
                         child: TextButton(
                             onPressed: () {
@@ -300,8 +364,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                 height: 10,
               ),
               Container(
-                height: 130,
-                color: Colors.orangeAccent,
+                height: nullCheck ? 80 : 120,
                 child: SingleChildScrollView(
                   child: Text(
                     product['description'],

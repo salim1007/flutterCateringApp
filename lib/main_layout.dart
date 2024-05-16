@@ -1,3 +1,4 @@
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/main.dart';
@@ -5,8 +6,10 @@ import 'package:food_delivery_app/screens/booking_page.dart';
 import 'package:food_delivery_app/screens/cart_page.dart';
 import 'package:food_delivery_app/screens/favourites_page.dart';
 import 'package:food_delivery_app/screens/home_page.dart';
+import 'package:food_delivery_app/screens/notification_page.dart';
 import 'package:food_delivery_app/screens/order_page.dart';
 import 'package:food_delivery_app/screens/profile_page.dart';
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -21,8 +24,6 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    // final userData = ModalRoute.of(context)!.settings.arguments as Map;
-
     return Scaffold(
       body: PageView(
         controller: _page,
@@ -31,12 +32,13 @@ class _MainLayoutState extends State<MainLayout> {
             currentPage = value;
           });
         }),
-        children: [ //to be added - condition for drivers
+        children: [
+          //to be added - condition for drivers
           HomePage(),
           CartsPage(),
           OrdersPage(),
           BookingPage(),
-          FavouritesPage(),
+          NotificationPage(),
           ProfilePage(),
         ],
       ),
@@ -60,41 +62,45 @@ class _MainLayoutState extends State<MainLayout> {
           onPressed: () {
             MyApp.navigatorKey.currentState!.pushNamed('book_list');
           }),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentPage,
+      bottomNavigationBar: CurvedNavigationBar(
+        color: Colors.orangeAccent,
+        backgroundColor: Colors.white,
+        // currentIndex: currentPage,
+
+        items: const [
+          CurvedNavigationBarItem(
+            child: FaIcon(FontAwesomeIcons.houseChimney),
+            // label: 'Home',
+          ),
+          CurvedNavigationBarItem(
+            child: FaIcon(FontAwesomeIcons.cartShopping),
+            // label: 'Cart'
+          ),
+          CurvedNavigationBarItem(
+            child: FaIcon(FontAwesomeIcons.truck),
+            // label: 'Orders'
+          ),
+          CurvedNavigationBarItem(
+            child: FaIcon(FontAwesomeIcons.book),
+            // label: 'Book'
+          ),
+          CurvedNavigationBarItem(
+            child: FaIcon(FontAwesomeIcons.heart),
+            // label: 'Notify'
+          ),
+          CurvedNavigationBarItem(
+            child: FaIcon(
+              FontAwesomeIcons.person,
+            ),
+            // label: 'Profile'
+          ),
+        ],
         onTap: (page) {
           setState(() {
             currentPage = page;
-            _page.animateToPage(page,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut);
+            _page.jumpToPage(page);
           });
         },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.houseChimney,
-                color: Colors.orangeAccent),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.cartShopping,
-                  color: Colors.orangeAccent),
-              label: 'Cart'),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.truck, color: Colors.orangeAccent),
-              label: 'Orders'),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.book, color: Colors.orangeAccent),
-              label: 'Book'),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.heart, color: Colors.orangeAccent),
-              label: 'Fav'),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.person, color: Colors.orangeAccent),
-              label: 'Profile'),
-        ],
-        selectedItemColor: Colors.black,
-        elevation: 5.0,
       ),
     );
   }

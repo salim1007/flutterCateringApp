@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/components/otp_input.dart';
 import 'package:food_delivery_app/main.dart';
-import 'package:food_delivery_app/main_layout.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerification extends StatefulWidget {
   const OtpVerification({super.key});
@@ -91,37 +93,59 @@ class _OtpVerificationState extends State<OtpVerification> {
               SizedBox(
                 height: 30,
               ),
-              TextButton(
-                  onPressed: () async {
-                    String otpString = _fieldOne.text +
-                        _fieldTwo.text +
-                        _fieldThree.text +
-                        _fieldFour.text +
-                        _fieldFive.text +
-                        _fieldSix.text;
+              Consumer<AuthModel>(builder: (context, auth, child) {
+                return TextButton(
+                    onPressed: () async {
+                      String otpString = _fieldOne.text +
+                          _fieldTwo.text +
+                          _fieldThree.text +
+                          _fieldFour.text +
+                          _fieldFive.text +
+                          _fieldSix.text;
 
-                    final otpVerification = await DioProvider()
-                        .verifyOtp(otpString, userData['email']);
+                      final otpVerification = await DioProvider()
+                          .verifyOtp(otpString, userData['email']);
 
-                    if (otpVerification) {
-                      MyApp.navigatorKey.currentState!
-                          .pushNamed('auth_page');
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                    overlayColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 179, 174, 174)),
-                  ),
-                  child: const Text(
-                    'Verify',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      if (otpVerification) {
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        final tokenValue = prefs.getString('token') ?? '';
+
+                        if (tokenValue.isNotEmpty && otpVerification != '') {
+                          final userDetail =
+                              await DioProvider().getUser(tokenValue);
+
+                          if (userDetail != null) {
+                            setState(() {
+                              final userData = json.decode(userDetail);
+
+                              print(userData);
+
+                              auth.loginSuccess(userData);
+
+                              MyApp.navigatorKey.currentState!
+                                  .pushNamed('main_layout');
+                            });
+                          }
+                        }
+                       
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                      overlayColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 179, 174, 174)),
                     ),
-                  )),
+                    child: const Text(
+                      'Verify',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ));
+              })
             ],
           ),
         ),

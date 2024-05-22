@@ -32,7 +32,7 @@ class FavCard extends StatelessWidget {
                         color: Colors.amber,
                         image: DecorationImage(
                             image: NetworkImage(
-                                'http://127.0.0.1:8000/storage/${productData['photo_path']}'),
+                                'http://192.168.1.145:8000/storage/${productData['photo_path']}'),
                             fit: BoxFit.cover)),
                   ),
                   Container(

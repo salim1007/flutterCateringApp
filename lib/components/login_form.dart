@@ -97,14 +97,14 @@ class _LoginFormState extends State<LoginForm> {
             Consumer<AuthModel>(builder: (context, auth, child) {
               return TextButton(
                   onPressed: () async {
-                    final token = await DioProvider().getToken(
+                    final response = await DioProvider().getToken(
                         _emailController.text, _passwordController.text);
-                    if (token) {
+                    if (response) {
                       final SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       final tokenValue = prefs.getString('token') ?? '';
 
-                      if (tokenValue.isNotEmpty && token != '') {
+                      if (tokenValue.isNotEmpty && response != '') {
                         final userDetail =
                             await DioProvider().getUser(tokenValue);
 

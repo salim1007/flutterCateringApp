@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 if (auth.getUser['profile_photo_path'] != null)
                                   Image.network(
-                                    'http://127.0.0.1:8000/storage/${auth.getUser['profile_photo_path']}',
+                                    'http://192.168.1.145:8000/storage/${auth.getUser['profile_photo_path']}',
                                     width: 150,
                                     height: 150,
                                     fit: BoxFit.cover,

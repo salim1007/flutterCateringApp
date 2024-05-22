@@ -93,7 +93,7 @@ class _CartsPageState extends State<CartsPage> {
                                     color: Colors.amber,
                                     image: DecorationImage(
                                         image: NetworkImage(
-                                            'http://127.0.0.1:8000/storage/${cartItem['prod_image']}'),
+                                            'http://192.168.1.145:8000/storage/${cartItem['prod_image']}'),
                                         fit: BoxFit.cover)),
                               ),
                               Container(

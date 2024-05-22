@@ -38,7 +38,7 @@ class _EditFormState extends State<EditForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 350,
       margin: EdgeInsets.all(15),
       child: Form(
         key: _formKey,

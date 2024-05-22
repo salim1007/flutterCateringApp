@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "451783298102",
+    "project_id": "fluttersigninfc",
+    "storage_bucket": "fluttersigninfc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451783298102:android:7c925485b9aba09559dc97",
+        "android_client_info": {
+          "package_name": "com.example.food_delivery_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "451783298102-k1ek2ulko131p0b9khvi6bi3tm3foom2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe-4gFQINLd10yXe5PazcvGgqZhD-jHA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "451783298102-k1ek2ulko131p0b9khvi6bi3tm3foom2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "451783298102-bs80miq6vonkjmmfsprjirjhu1n04vu1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.foodDeliveryApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

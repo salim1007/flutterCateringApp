@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:food_delivery_app/main.dart';
+import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:food_delivery_app/screens/otp_verification.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -14,6 +18,10 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  User? _user;
+
   final _formKey = GlobalKey<FormState>();
 
   final _usernameController = TextEditingController();
@@ -25,6 +33,16 @@ class _RegisterFormState extends State<RegisterForm> {
   bool obscurePassConfirm = true;
 
   Map<String, dynamic> user = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _auth.authStateChanges().listen((event) {
+      setState(() {
+        _user = event;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +164,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           ),
                   )),
             ),
-               const SizedBox(
+            const SizedBox(
               height: 15,
             ),
             TextFormField(
@@ -203,9 +221,8 @@ class _RegisterFormState extends State<RegisterForm> {
                     user = json.decode(userRegistration);
                     print(user);
 
-                    MyApp.navigatorKey.currentState!.pushNamed('reg_otp_verification', arguments: user);
-
-                   
+                    MyApp.navigatorKey.currentState!
+                        .pushNamed('reg_otp_verification', arguments: user);
                   }
                 },
                 style: ButtonStyle(
@@ -222,7 +239,50 @@ class _RegisterFormState extends State<RegisterForm> {
                     color: Colors.black,
                   ),
                 )),
+            SizedBox(
+              height: 20,
+            ),
+            SignInButton(
+              Buttons.google,
+              onPressed: _handleGoogleSignIn,
+              text: 'Sign Up with Google',
+            )
           ],
         ));
+  }
+
+  void _handleGoogleSignIn() async {
+    try {
+      GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
+      _auth.signInWithProvider(googleAuthProvider);
+
+      var auth = Provider.of<AuthModel>(context, listen: false);
+
+      if (_user != null) {
+        print(_user!.displayName);
+        var tokenValue = await DioProvider().signUpnWithGoogle(
+            _user!.email!);
+            
+        if (tokenValue != '') {
+          
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString('token') ?? '';
+          final userDetail = await DioProvider().getUser(token);
+          if (userDetail != null) {
+            setState(() {
+              final userData = json.decode(userDetail);
+
+              print(userData);
+
+              auth.loginSuccess(userData);
+
+              MyApp.navigatorKey.currentState!.pushNamed('main_layout');
+            });
+          }
+        }
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 }

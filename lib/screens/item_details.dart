@@ -96,7 +96,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                   borderRadius: BorderRadius.circular(200),
                   image: DecorationImage(
                       image: NetworkImage(
-                          'http://127.0.0.1:8000/storage/${product['photo_path']}'),
+                          'http://192.168.1.145:8000/storage/${product['photo_path']}'),
                       fit: BoxFit.cover),
                   color: Colors.amberAccent,
                 ),
@@ -271,7 +271,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                               image: ClipRect(
                                 child: Image.network(
                                   height: 80,
-                                  'http://127.0.0.1:8000/storage/${product['photo_path']}',
+                                  'http://192.168.1.145:8000/storage/${product['photo_path']}',
                                 ),
                               ),
                               initialRating: 1.0,

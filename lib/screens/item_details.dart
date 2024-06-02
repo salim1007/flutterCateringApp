@@ -47,9 +47,9 @@ class _ItemDetailsState extends State<ItemDetails> {
         category['large_size'] != null;
 
     return Scaffold(
-      backgroundColor: Colors.orangeAccent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.orangeAccent,
+        backgroundColor:Theme.of(context).scaffoldBackgroundColor,
         actions: [
           Consumer<AuthModel>(builder: (context, auth, child) {
             bool isFav = auth.getFav.contains(product['id']);
@@ -96,7 +96,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                   borderRadius: BorderRadius.circular(200),
                   image: DecorationImage(
                       image: NetworkImage(
-                          'http://192.168.1.145:8000/storage/${product['photo_path']}'),
+                          'http://192.168.1.131:8000/storage/${product['photo_path']}'),
                       fit: BoxFit.cover),
                   color: Colors.amberAccent,
                 ),
@@ -246,12 +246,12 @@ class _ItemDetailsState extends State<ItemDetails> {
                     child: ElevatedButton(
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 240, 235, 222),
+                        Theme.of(context).primaryColor,
                       ),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(color: Colors.orangeAccent)))),
+                              side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor,)))),
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -271,7 +271,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                               image: ClipRect(
                                 child: Image.network(
                                   height: 80,
-                                  'http://192.168.1.145:8000/storage/${product['photo_path']}',
+                                  'http://192.168.1.131:8000/storage/${product['photo_path']}',
                                 ),
                               ),
                               initialRating: 1.0,
@@ -315,7 +315,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(20),
                                 bottomLeft: Radius.circular(20)),
-                            color: Color.fromARGB(255, 240, 235, 222)),
+                            color: Theme.of(context).primaryColor,),
                         height: 30,
                         child: TextButton(
                             onPressed: () {
@@ -327,15 +327,17 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 }
                               });
                             },
-                            child: const FaIcon(
+                            child:  FaIcon(
                               FontAwesomeIcons.minus,
                               size: 18,
+                              color: Colors.black,
                             )),
                       ),
                       Text(
                         '$quantity',
                         style: TextStyle(
-                            backgroundColor: Color.fromARGB(255, 240, 235, 222),
+                          color: Colors.black,
+                            backgroundColor:Theme.of(context).primaryColor,
                             fontSize: 21),
                       ),
                       Container(
@@ -343,7 +345,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(20),
                                 bottomRight: Radius.circular(20)),
-                            color: Color.fromARGB(255, 240, 235, 222)),
+                            color: Theme.of(context).primaryColor,),
                         height: 30,
                         child: TextButton(
                             onPressed: () {
@@ -351,9 +353,10 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 quantity++;
                               });
                             },
-                            child: const FaIcon(
+                            child: FaIcon(
                               FontAwesomeIcons.plus,
                               size: 18,
+                              color: Colors.black,
                             )),
                       ),
                     ],
@@ -379,7 +382,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Color.fromARGB(255, 240, 235, 222)),
+                    color: Theme.of(context).primaryColor),
                 height: 80,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -388,7 +391,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                       'Tsh. ' +
                           (double.parse(product['price']) * quantity * factor)
                               .toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                     Container(
                       margin: EdgeInsets.all(2),
@@ -453,6 +456,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             'Add To Cart',
                             style: TextStyle(
                                 color: Colors.black,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold),
                           )),
                     )

@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "451783298102-7sb59cf8kjltm8uthoh94kblv8hcik1l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.food_delivery_app",
+            "certificate_hash": "ae9dc1afd0e6cac3973c0895cd6289cfee45effc"
+          }
+        },
+        {
+          "client_id": "451783298102-n2t1pvf2aha5hsnb43ap51rqp8sf1i71.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.food_delivery_app",
+            "certificate_hash": "077ab48660515a6b493be02280631633361952ed"
+          }
+        },
+        {
           "client_id": "451783298102-k1ek2ulko131p0b9khvi6bi3tm3foom2.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -38,7 +38,6 @@ class _CardItemState extends State<CardItem> {
         child: Container(
           height: 300,
           margin: EdgeInsets.all(5),
-          color: Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -51,7 +50,7 @@ class _CardItemState extends State<CardItem> {
                   color: Colors.orangeAccent,
                   image: DecorationImage(
                     image: NetworkImage(
-                        'http://192.168.1.145:8000/storage/${widget.product['photo_path']}'),
+                        'http://192.168.1.131:8000/storage/${widget.product['photo_path']}'),
                     fit: BoxFit.cover,
                   ),
                 ),

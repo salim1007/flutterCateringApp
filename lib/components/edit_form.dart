@@ -10,11 +10,13 @@ class EditForm extends StatefulWidget {
       {super.key,
       required this.email,
       required this.phone,
-      required this.address});
+      required this.address,
+      required this.username});
 
   final String email;
   final String phone;
   final String address;
+  final String username;
 
   @override
   State<EditForm> createState() => _EditFormState();
@@ -26,6 +28,7 @@ class _EditFormState extends State<EditForm> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
 
   @override
   void initState() {
@@ -33,12 +36,13 @@ class _EditFormState extends State<EditForm> {
     _emailController = TextEditingController(text: widget.email);
     _phoneController = TextEditingController(text: widget.phone);
     _addressController = TextEditingController(text: widget.address);
+    _usernameController = TextEditingController(text: widget.username);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 350,
+      height: 420,
       margin: EdgeInsets.all(15),
       child: Form(
         key: _formKey,
@@ -50,6 +54,29 @@ class _EditFormState extends State<EditForm> {
             ),
             SizedBox(
               height: 20,
+            ),
+            TextFormField(
+              controller: _usernameController,
+              keyboardType: TextInputType.name,
+              cursorColor: Colors.orangeAccent,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                prefixIcon: Icon(Icons.person),
+                prefixIconColor: Colors.orangeAccent,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: const BorderSide(
+                    color: Colors.orangeAccent,
+                    width: 2.0,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
             ),
             TextFormField(
               controller: _emailController,
@@ -129,14 +156,17 @@ class _EditFormState extends State<EditForm> {
                   onPressed: () async {
                     var response = await DioProvider().updateProfile(
                         auth.getAuthUserID,
+                        _usernameController.text,
                         _emailController.text,
                         _phoneController.text,
                         _addressController.text,
                         auth.getAuthUserToken);
 
-                        print(response);
+                        
+                        print(auth.getAuthUserID);
 
-                        if(response == true){
+                        if(response != ''){
+                          
                           var newUserData = await DioProvider().getUser(auth.getAuthUserToken);
                           auth.updateUser(json.decode(newUserData));
                         }

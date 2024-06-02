@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/timeline.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
+import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:provider/provider.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -17,12 +20,21 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getAuthUserOrders();
+    });
+  }
+
+  Future<void> _getAuthUserOrders() async{
+    var authModel = Provider.of<AuthModel>(context, listen: false);
+    var userOrders = await DioProvider().getAuthUserOrders(authModel.getAuthUserID, authModel.getAuthUserToken);
+    setState(() {
+      ordersList = json.decode(userOrders);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    ordersList = Provider.of<AuthModel>(context, listen: false).getUserOrders;
-
     return Scaffold(
         appBar: AppBar(
           title: Text('Orders'),
@@ -103,12 +115,12 @@ class _OrdersPageState extends State<OrdersPage> {
                             ..add(Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
                                   'Placed On: ${orderItem['updated_at']}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.w700,
                                       color: Colors.green,
                                       fontSize: 10),
@@ -117,15 +129,15 @@ class _OrdersPageState extends State<OrdersPage> {
                                   children: [
                                     Text(
                                       'Delivery Location: ${orderItem['destination']}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.w700,
                                           color: Colors.black,
                                           fontSize: 10),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 2,
                                     ),
-                                    Icon(
+                                    const Icon(
                                       FontAwesomeIcons.locationDot,
                                       size: 14,
                                     ),
@@ -141,7 +153,7 @@ class _OrdersPageState extends State<OrdersPage> {
                             )),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
@@ -160,7 +172,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                         return Dialog(
                                           child: Container(
                                               decoration: BoxDecoration(
-                                                  color: Color.fromARGB(
+                                                  color: const Color.fromARGB(
                                                       255, 233, 224, 211),
                                                   borderRadius:
                                                       BorderRadius.circular(

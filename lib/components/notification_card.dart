@@ -1,8 +1,33 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
-class NotificationCard extends StatelessWidget {
-  const NotificationCard({super.key});
+class NotificationCard extends StatefulWidget {
+  const NotificationCard({super.key, required this.userNotifications, required this.notificationCount});
+  final List<dynamic> userNotifications;
+  final int notificationCount;
+
+  @override
+  State<NotificationCard> createState() => _NotificationCardState();
+}
+
+class _NotificationCardState extends State<NotificationCard> {
+  String latestMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    Map<String, dynamic> message =
+        json.decode(widget.userNotifications.last['message']);
+    latestMessage = message['greeting'] +
+        ' ' +
+        message['introduction'] +
+        ' ' +
+        message['encouragement'] +
+        ' ' +
+        message['closing'] +
+        ' ' +
+        message['from'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,26 +39,38 @@ class NotificationCard extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.blue, borderRadius: BorderRadius.circular(50)),
         ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         Expanded(
           child: Container(
               padding: EdgeInsets.all(2),
               height: 70,
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    const Text(
+                      'YDDE FAST FOODS',
+                      style:
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    widget.notificationCount > 0 ?
+                    CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.orangeAccent,
+                      child: Text('${widget.notificationCount}', style: TextStyle(fontSize: 10),),
+                    ) : Text(''),
+                  ]),
                   Text(
-                    'YDDE FAST FOODS',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Welcome to Ydde Fast Foods, This is very longggggg, This is very longggggg,This is very longggggg, This is very longggggg',
-                    style: TextStyle(fontSize: 13),
+                    latestMessage,
+                    style: const TextStyle(fontSize: 13),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     softWrap: true,

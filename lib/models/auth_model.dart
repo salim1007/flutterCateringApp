@@ -14,8 +14,8 @@ class AuthModel extends ChangeNotifier {
   List<dynamic> _fav = [];
   int userId = 0;
   String token = '';
+  List <dynamic> notificationLength = [];
   String todaysDate = DateFormat('M/d/y').format(DateTime.now());
-  
 
   Position? _currentLocation;
   late bool servicePermisiion = false;
@@ -24,10 +24,9 @@ class AuthModel extends ChangeNotifier {
 
   List<dynamic> authCart = [];
   double totalCartPrice = 0;
-  List<dynamic> authOrders = [];
+  // List<dynamic> authOrders = [];
   List<dynamic> authBookings = [];
   List<dynamic> systemProducts = [];
-
 
   List<dynamic> get getSystemProducts {
     return systemProducts;
@@ -57,10 +56,14 @@ class AuthModel extends ChangeNotifier {
     return _currentAddress;
   }
 
-
-  List<dynamic> get getUserOrders {
-    return authOrders;
+  int get getNotificationCount {
+    return notificationLength.length;
   }
+
+
+  // List<dynamic> get getUserOrders {
+  //   return authOrders;
+  // }
 
   bool get isLogin {
     return _isLogin;
@@ -120,7 +123,6 @@ class AuthModel extends ChangeNotifier {
 
       _currentAddress =
           '${place.street} - ${place.subLocality}, ${place.locality}';
-          
     } catch (error) {
       return error;
     }
@@ -141,18 +143,22 @@ class AuthModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateOrder(List<dynamic> newOrder) {
-    authOrders = newOrder;
-    notifyListeners();
-  }
+  // void updateOrder(List<dynamic> newOrder) {
+  //   authOrders = newOrder;
+  //   notifyListeners();
+  // }
 
   void updateBookings(List<dynamic> newBookings) {
     authBookings = newBookings;
     notifyListeners();
   }
 
-  void updateUser(Map<String, dynamic> newUserData){
+  void updateUser(Map<String, dynamic> newUserData) {
     user = newUserData;
+    notifyListeners();
+  }
+  void updateNotificationCount(int newCount){
+    notificationLength.length = newCount;
     notifyListeners();
   }
 
@@ -165,28 +171,39 @@ class AuthModel extends ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token') ?? '';
+    print('token: $token'); // Debug line
 
     var products = await DioProvider().getAllProducts(token);
     var productDetails = json.decode(products);
+    print('productDetails: $productDetails'); // Debug line
 
     var bookings = await DioProvider().fetchBooks(user['id'], token);
     var authUserBookings = json.decode(bookings);
-
-    var orders = await DioProvider().getAuthUserOrders(user['id'], token);
-    var authUserOrders = json.decode(orders);
+    print('authUserBookings: $authUserBookings'); // Debug line
+    //
+    // var orders = await DioProvider().getAuthUserOrders(user['id'], token);
+    // var authUserOrders = json.decode(orders);
+    // print('authUserOrders: $authUserOrders'); // Debug line
 
     var cart = await DioProvider().getUserCart(user['id']);
     var authUserCart = json.decode(cart);
+    print('authUserCart: $authUserCart'); // Debug line
+
     double total = 0;
     for (var cartItem in authUserCart) {
       total += cartItem['total_price'];
+    }
+
+    for (var msg in user['user_notes']){
+      msg['status'] == 'not_viewed';
+      notificationLength.add(msg);
     }
 
     userId = user['id'];
     authBookings = authUserBookings;
     authCart = authUserCart;
     totalCartPrice = total;
-    authOrders = authUserOrders;
+    // authOrders = authUserOrders;
     systemProducts = productDetails;
 
     await _initializeLocation();

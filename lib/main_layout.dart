@@ -43,18 +43,18 @@ class _MainLayoutState extends State<MainLayout> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.white,
-          child: Center(
+          backgroundColor:Theme.of(context).floatingActionButtonTheme.backgroundColor,
+          child:  Center(
             child: Column(
               children: [
                 SizedBox(height: 9),
-                Icon(
+                const Icon(
                   FontAwesomeIcons.listUl,
                   color: Colors.orangeAccent,
                 ),
                 Text(
                   'Bookings',
-                  style: TextStyle(fontSize: 10),
+                  style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.headlineMedium?.color),
                 )
               ],
             ),
@@ -64,7 +64,7 @@ class _MainLayoutState extends State<MainLayout> {
           }),
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.orangeAccent,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         // currentIndex: currentPage,
 
         items: const [

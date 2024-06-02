@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '451783298102',
     projectId: 'fluttersigninfc',
     storageBucket: 'fluttersigninfc.appspot.com',
+    androidClientId: '451783298102-7sb59cf8kjltm8uthoh94kblv8hcik1l.apps.googleusercontent.com',
     iosClientId: '451783298102-bs80miq6vonkjmmfsprjirjhu1n04vu1.apps.googleusercontent.com',
     iosBundleId: 'com.example.foodDeliveryApp',
   );
@@ -74,6 +75,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '451783298102',
     projectId: 'fluttersigninfc',
     storageBucket: 'fluttersigninfc.appspot.com',
+    androidClientId: '451783298102-7sb59cf8kjltm8uthoh94kblv8hcik1l.apps.googleusercontent.com',
     iosClientId: '451783298102-bs80miq6vonkjmmfsprjirjhu1n04vu1.apps.googleusercontent.com',
     iosBundleId: 'com.example.foodDeliveryApp',
   );

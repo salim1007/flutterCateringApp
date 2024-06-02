@@ -5,38 +5,47 @@ import 'package:food_delivery_app/components/card_item.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  // final Map<dynamic, dynamic> userData;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  
-
   Map<String, dynamic> userDetails = {};
   List<dynamic> favList = [];
   String currentAddress = '';
+  int notifications = 0;
 
   bool isFirstLoaded = true;
   bool isLoading = false;
 
   List<dynamic> productDetails = [];
 
-  
-
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _getProducts();
-   
-     
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getNotificationState();
+    });
+  }
+
+  Future<void> _getNotificationState() async {
+    var authModel = Provider.of<AuthModel>(context, listen: false);
+    var response = await DioProvider()
+        .getNotifications(authModel.getAuthUserID, authModel.getAuthUserToken);
+        print(response);
+    if (response != null) {
+      setState(() {
+        notifications = response;
+      });
+    }
   }
 
   Future<void> _getProducts() async {
@@ -48,14 +57,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     userDetails = Provider.of<AuthModel>(context, listen: false).getUser;
     favList = Provider.of<AuthModel>(context, listen: false).getFav;
-    currentAddress = Provider.of<AuthModel>(context, listen: false).getCurrentLocation;
+    currentAddress =
+        Provider.of<AuthModel>(context, listen: false).getCurrentLocation;
 
-     print('user data is: $userDetails');
-     print('favlist is data is: $favList');
+       TextTheme _textTheme = Theme.of(context).textTheme;
 
+    print('user data is: $userDetails');
+    print('favlist is data is: $favList');
 
     return SafeArea(
       child: Scaffold(
@@ -69,51 +79,63 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Welcome, ${userDetails['name']}',
+                    'Welcome ${userDetails['name'] ?? ''}',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  FaIcon(
-                    FontAwesomeIcons.bell,
-                    color: Colors.black,
-                  )
+                  GestureDetector(
+                    onTap: () {
+
+                      MyApp.navigatorKey.currentState!.pushNamed('notification_page', arguments: notifications);
+                    },
+                    child: notifications > 0
+                        ? Lottie.asset('assets/bell.json',
+                            width: 50, height: 50)
+                        :  Icon(
+                            FontAwesomeIcons.solidBell,
+                            color: Theme.of(context).textTheme.headlineMedium?.color,
+                            size: 20,
+                          ),
+                  ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  FaIcon(FontAwesomeIcons.locationDot),
-                  SizedBox(
+                  FaIcon(FontAwesomeIcons.locationDot, color: Theme.of(context).textTheme.headlineMedium?.color, size: 15,),
+                  const SizedBox(
                     width: 5,
                   ),
-                  currentAddress == '' ? 
-                  Container(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      value: null,
-                      strokeWidth: 2.0,
-                    ),
-                  ) :
-                  Text(
-                   currentAddress,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,),
-                  )
+                  currentAddress == ''
+                      ? Container(
+                          height: 20,
+                          width: 20,
+                          child: const CircularProgressIndicator(
+                            value: null,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : Text(
+                          currentAddress,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               SearchBar(
-                onTap: (){
+                onTap: () {
                   MyApp.navigatorKey.currentState!.pushNamed('search_page');
                 },
                 hintText: 'Search...',
                 backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.orangeAccent),
-              
+                    MaterialStateProperty.all<Color>(Theme.of(context).cardColor),
               ),
               SizedBox(
                 height: 15,
@@ -143,8 +165,7 @@ class _HomePageState extends State<HomePage> {
                                 height: 150,
                                 width: double.infinity,
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      10), 
+                                  borderRadius: BorderRadius.circular(10),
                                   child: Image.asset(
                                     'assets/pizza3.jpg',
                                     fit: BoxFit.cover,
@@ -182,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                               },
                               child: Card(
                                 margin: const EdgeInsets.all(5),
-                                color: Colors.orangeAccent,
+                                color: Theme.of(context).cardColor,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15, vertical: 10),
@@ -190,17 +211,13 @@ class _HomePageState extends State<HomePage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: <Widget>[
-                                    
                                       const SizedBox(
                                         width: 20,
                                       ),
                                       Text(
                                         userDetails['categories'][index]
                                             ['category_name'],
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
+                                        style: _textTheme.headlineMedium,
                                       ),
                                     ],
                                   ),
@@ -226,7 +243,9 @@ class _HomePageState extends State<HomePage> {
                           // Assuming each item in productDetails is of type Map<String, dynamic>
                           Map<String, dynamic> product =
                               productDetails[index] as Map<String, dynamic>;
-                          return CardItem(product: product, isFav: favList.contains(product['id']));
+                          return CardItem(
+                              product: product,
+                              isFav: favList.contains(product['id']));
                         },
                       ),
                     ],

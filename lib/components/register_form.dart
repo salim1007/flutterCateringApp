@@ -6,6 +6,7 @@ import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:food_delivery_app/screens/otp_verification.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_in_button/sign_in_button.dart';
@@ -18,9 +19,9 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  User? _user;
+  // User? _user;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -34,18 +35,19 @@ class _RegisterFormState extends State<RegisterForm> {
 
   Map<String, dynamic> user = {};
 
-  @override
-  void initState() {
-    super.initState();
-    _auth.authStateChanges().listen((event) {
-      setState(() {
-        _user = event;
-      });
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _auth.authStateChanges().listen((event) {
+  //     setState(() {
+  //       _user = event;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    
     return Form(
         key: _formKey,
         child: Column(
@@ -217,6 +219,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       _passwordController.text,
                       _passwordConfirmController.text);
 
+                      print(userRegistration);
+
                   if (userRegistration != '') {
                     user = json.decode(userRegistration);
                     print(user);
@@ -253,21 +257,40 @@ class _RegisterFormState extends State<RegisterForm> {
 
   void _handleGoogleSignIn() async {
     try {
-      GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
-      _auth.signInWithProvider(googleAuthProvider);
+      // GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
+      // UserCredential userCredential = await _auth.signInWithProvider(googleAuthProvider);
 
       var auth = Provider.of<AuthModel>(context, listen: false);
 
-      if (_user != null) {
-        print(_user!.displayName);
-        var tokenValue = await DioProvider().signUpnWithGoogle(
-            _user!.email!);
-            
-        if (tokenValue != '') {
-          
+      // _user = userCredential.user;
+
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken
+      );
+
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+
+      if (userCredential.user != null) {
+        print(userCredential.user?.displayName);
+
+        
+        var response = await DioProvider().signUpnWithGoogle(
+            userCredential.user?.email);
+
+        print(response);
+
+        if (response) {
+          print('inside');
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           final token = prefs.getString('token') ?? '';
           final userDetail = await DioProvider().getUser(token);
+          print(userDetail);
           if (userDetail != null) {
             setState(() {
               final userData = json.decode(userDetail);

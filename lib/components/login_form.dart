@@ -115,6 +115,7 @@ class _LoginFormState extends State<LoginForm> {
                             print(userData);
 
                             auth.loginSuccess(userData);
+                            print(auth.getAuthUserID);
 
                             MyApp.navigatorKey.currentState!
                                 .pushNamed('main_layout'); // arguments: userData

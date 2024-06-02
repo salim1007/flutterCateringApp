@@ -93,7 +93,7 @@ class _CartsPageState extends State<CartsPage> {
                                     color: Colors.amber,
                                     image: DecorationImage(
                                         image: NetworkImage(
-                                            'http://192.168.1.145:8000/storage/${cartItem['prod_image']}'),
+                                            'http://192.168.1.131:8000/storage/${cartItem['prod_image']}'),
                                         fit: BoxFit.cover)),
                               ),
                               Container(
@@ -364,14 +364,14 @@ class _CartsPageState extends State<CartsPage> {
 
                                             print(response);
                                             if (response) {
-                                              var newOrder = await DioProvider()
-                                                  .getAuthUserOrders(
-                                                      userData['id'],
-                                                      authModel
-                                                          .getAuthUserToken);
-
-                                              authModel.updateOrder(
-                                                  json.decode(newOrder));
+                                              // var newOrder = await DioProvider()
+                                              //     .getAuthUserOrders(
+                                              //         userData['id'],
+                                              //         authModel
+                                              //             .getAuthUserToken);
+                                              //
+                                              // authModel.updateOrder(
+                                              //     json.decode(newOrder));
 
                                               var isDeleted = await DioProvider()
                                                   .deleteUserCart(

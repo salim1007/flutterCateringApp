@@ -38,7 +38,7 @@ class _MainLayoutState extends State<MainLayout> {
           CartsPage(),
           OrdersPage(),
           BookingPage(),
-          NotificationPage(),
+          FavouritesPage(),
           ProfilePage(),
         ],
       ),

@@ -1,7 +1,13 @@
 import 'dart:convert';
 
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_delivery_app/components/delightful_toast.dart';
+import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
@@ -49,7 +55,7 @@ class _ItemDetailsState extends State<ItemDetails> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor:Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: [
           Consumer<AuthModel>(builder: (context, auth, child) {
             bool isFav = auth.getFav.contains(product['id']);
@@ -61,8 +67,20 @@ class _ItemDetailsState extends State<ItemDetails> {
 
                     if (list.contains(product['id'])) {
                       list.removeWhere((id) => id == product['id']);
+                      showToast(
+                          "${product['product_name']} removed from liked list",
+                          Theme.of(context).canvasColor,
+                          Theme.of(context).textTheme.headlineMedium?.color,
+                          MediaQuery.of(context).size.width * 0.035,
+                          ToastGravity.BOTTOM);
                     } else {
                       list.add(product['id']);
+                      showToast(
+                          "${product['product_name']} added to liked list",
+                          Theme.of(context).canvasColor,
+                          Theme.of(context).textTheme.headlineMedium?.color,
+                          MediaQuery.of(context).size.width * 0.035,
+                          ToastGravity.BOTTOM);
                     }
 
                     auth.setFavList(list);
@@ -78,6 +96,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                   child: FaIcon(
                     isFav ? Icons.favorite_rounded : Icons.favorite_outline,
                     color: Colors.red,
+                    size: MediaQuery.of(context).size.width * 0.08,
                   )),
             );
           })
@@ -85,13 +104,16 @@ class _ItemDetailsState extends State<ItemDetails> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 35),
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width > 550
+                  ? MediaQuery.of(context).size.width * 0.15
+                  : MediaQuery.of(context).size.width * 0.1),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                height: 290,
+                height: MediaQuery.of(context).size.height * 0.34,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(200),
                   image: DecorationImage(
@@ -102,7 +124,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: MediaQuery.of(context).size.height * 0.025,
               ),
               nullCheck
                   ? Container(
@@ -123,7 +145,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             child: Container(
                               decoration: BoxDecoration(
                                   color: isSmallSelected
-                                      ? Color.fromARGB(255, 240, 235, 222)
+                                      ? Theme.of(context).canvasColor
                                       : Color.fromARGB(255, 233, 148, 21),
                                   borderRadius: BorderRadius.circular(10)),
                               padding: EdgeInsets.all(10),
@@ -134,18 +156,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                                   Text(
                                     'Small',
                                     style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.015,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
-                                    height: 5,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.005,
                                   ),
                                   Text(
                                     '${category['small_size']}' +
                                         ' ' +
                                         'inches',
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.height *
+                                              0.013,
                                     ),
                                   )
                                 ],
@@ -164,7 +191,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             child: Container(
                               decoration: BoxDecoration(
                                   color: isMediumSelected
-                                      ? Color.fromARGB(255, 240, 235, 222)
+                                      ? Theme.of(context).canvasColor
                                       : Color.fromARGB(255, 233, 148, 21),
                                   borderRadius: BorderRadius.circular(10)),
                               padding: EdgeInsets.all(10),
@@ -175,18 +202,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                                   Text(
                                     'Medium',
                                     style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.015,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
-                                    height: 5,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.005,
                                   ),
                                   Text(
                                     '${category['medium_size']}' +
                                         ' ' +
                                         'inches',
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.height *
+                                              0.013,
                                     ),
                                   )
                                 ],
@@ -205,7 +237,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             child: Container(
                               decoration: BoxDecoration(
                                   color: isLargeSelected
-                                      ? Color.fromARGB(255, 240, 235, 222)
+                                      ? Theme.of(context).canvasColor
                                       : Color.fromARGB(255, 233, 148, 21),
                                   borderRadius: BorderRadius.circular(10)),
                               padding: EdgeInsets.all(10),
@@ -216,18 +248,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                                   Text(
                                     'Large',
                                     style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.015,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
-                                    height: 5,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.005,
                                   ),
                                   Text(
                                     '${category['large_size']}' +
                                         ' ' +
                                         'inches',
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.height *
+                                              0.013,
                                     ),
                                   )
                                 ],
@@ -243,68 +280,92 @@ class _ItemDetailsState extends State<ItemDetails> {
               ),
               Consumer<AuthModel>(builder: (context, auth, child) {
                 return Container(
+                    width: 20,
                     child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Theme.of(context).primaryColor,
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            Theme.of(context).primaryColor,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      side: BorderSide(
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                      )))),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RatingDialog(
+                                  title: Text(
+                                    product['product_name'],
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.016,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  message: Text(
+                                    'Please help us rate ${product['product_name']}',
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.014),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  image: ClipRect(
+                                    child: Image.network(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.12,
+                                      'http://192.168.1.131:8000/storage/${product['photo_path']}',
+                                    ),
+                                  ),
+                                  initialRating: 1.0,
+                                  enableComment: false,
+                                  submitButtonText: 'Submit',
+                                  submitButtonTextStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.color,
+                                      fontSize:
+                                          MediaQuery.of(context).size.height *
+                                              0.016,
+                                      fontWeight: FontWeight.bold),
+                                  onSubmitted: (ratingResponse) {
+                                    submitRating(
+                                        ratingResponse.rating,
+                                        auth.getAuthUserID,
+                                        product['id'],
+                                        auth.getAuthUserToken);
+                                  });
+                            });
+                      },
+                      child: Text(
+                        'Rate product',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize:
+                                MediaQuery.of(context).size.height * 0.015),
                       ),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor,)))),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return RatingDialog(
-                              title: Text(
-                                product['product_name'],
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              message: Text(
-                                'Please help us rate ${product['product_name']}',
-                                style: TextStyle(fontSize: 13),
-                                textAlign: TextAlign.center,
-                              ),
-                              image: ClipRect(
-                                child: Image.network(
-                                  height: 80,
-                                  'http://192.168.1.131:8000/storage/${product['photo_path']}',
-                                ),
-                              ),
-                              initialRating: 1.0,
-                              enableComment: false,
-                              submitButtonText: 'Submit',
-                              submitButtonTextStyle: TextStyle(color: Colors.black,fontSize: 16, fontWeight: FontWeight.bold),
-                              onSubmitted: (ratingResponse) {
-                                submitRating(
-                                    ratingResponse.rating,
-                                    auth.getAuthUserID,
-                                    product['id'],
-                                    auth.getAuthUserToken);
-                              });
-                        });
-                  },
-                  child: Text(
-                    'Rate product',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 12),
-                  ),
-                ));
+                    ));
               }),
               SizedBox(
-                height: 15,
+                height: MediaQuery.of(context).size.height * 0.02,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     product['product_name'],
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * 0.018,
+                        fontWeight: FontWeight.bold),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -312,11 +373,12 @@ class _ItemDetailsState extends State<ItemDetails> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                bottomLeft: Radius.circular(20)),
-                            color: Theme.of(context).primaryColor,),
-                        height: 30,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              bottomLeft: Radius.circular(20)),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        height: MediaQuery.of(context).size.height * 0.035,
                         child: TextButton(
                             onPressed: () {
                               setState(() {
@@ -327,26 +389,36 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 }
                               });
                             },
-                            child:  FaIcon(
+                            child: FaIcon(
                               FontAwesomeIcons.minus,
-                              size: 18,
+                              size: MediaQuery.of(context).size.height * 0.02,
                               color: Colors.black,
                             )),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.02,
                       ),
                       Text(
                         '$quantity',
                         style: TextStyle(
-                          color: Colors.black,
-                            backgroundColor:Theme.of(context).primaryColor,
-                            fontSize: 21),
+                            color: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.color,
+                            // backgroundColor: Theme.of(context).primaryColor,
+                            fontSize: 22),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.02,
                       ),
                       Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20),
-                                bottomRight: Radius.circular(20)),
-                            color: Theme.of(context).primaryColor,),
-                        height: 30,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(20)),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        height: MediaQuery.of(context).size.height * 0.035,
                         child: TextButton(
                             onPressed: () {
                               setState(() {
@@ -355,7 +427,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                             },
                             child: FaIcon(
                               FontAwesomeIcons.plus,
-                              size: 18,
+                              size: MediaQuery.of(context).size.height * 0.02,
                               color: Colors.black,
                             )),
                       ),
@@ -364,26 +436,31 @@ class _ItemDetailsState extends State<ItemDetails> {
                 ],
               ),
               SizedBox(
-                height: 10,
+                height: MediaQuery.of(context).size.height * 0.03,
               ),
               Container(
-                height: nullCheck ? 80 : 120,
+                height: nullCheck
+                    ? MediaQuery.of(context).size.height * 0.08
+                    : MediaQuery.of(context).size.height * 0.12,
                 child: SingleChildScrollView(
                   child: Text(
                     product['description'],
-                    style: TextStyle(fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: MediaQuery.of(context).size.height * 0.014,
+                    ),
                   ),
                 ),
               ),
               SizedBox(
-                height: 10,
+                height: MediaQuery.of(context).size.height * 0.02,
               ),
               Container(
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Theme.of(context).primaryColor),
-                height: 80,
+                height: MediaQuery.of(context).size.height * 0.1,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -391,7 +468,10 @@ class _ItemDetailsState extends State<ItemDetails> {
                       'Tsh. ' +
                           (double.parse(product['price']) * quantity * factor)
                               .toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * 0.015,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
                     ),
                     Container(
                       margin: EdgeInsets.all(2),
@@ -412,7 +492,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                   quantity *
                                   factor;
 
-                              var productSize;
+                              int? productSize;
 
                               if (factor == 1.0 && nullCheck) {
                                 productSize = 12;
@@ -439,12 +519,32 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 var authModel = Provider.of<AuthModel>(context,
                                     listen: false);
                                 authModel.updateCart(json.decode(newCart));
+                                if (context.mounted) {
+                                  showDelighfulToast(
+                                      context,
+                                      "Product added to cart!",
+                                      Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.color,
+                                      Icons.shopping_cart,
+                                      Theme.of(context).canvasColor,
+                                      Theme.of(context).canvasColor);
+                                }
                                 MyApp.navigatorKey.currentState!
                                     .pushNamed('cart_page', arguments: {
                                   'showLeadingButton': showLeadingButton
                                 });
                               } else {
-                                print('Product already added to cart!');
+                                if (context.mounted) {
+                                  showDelighfulToast(
+                                      context,
+                                      "Product already added to cart!",
+                                      Color.fromARGB(255, 220, 201, 164),
+                                      Icons.remove_shopping_cart,
+                                      Colors.black,
+                                      Colors.black);
+                                }
                               }
                             }
                           },
@@ -456,7 +556,8 @@ class _ItemDetailsState extends State<ItemDetails> {
                             'Add To Cart',
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 12,
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.015,
                                 fontWeight: FontWeight.bold),
                           )),
                     )

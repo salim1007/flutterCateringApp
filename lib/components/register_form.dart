@@ -1,11 +1,18 @@
 import 'dart:convert';
 
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/components/delightful_toast.dart';
+import 'package:food_delivery_app/components/passcode_textformfield.dart';
+import 'package:food_delivery_app/components/textformfield.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:food_delivery_app/screens/otp_verification.dart';
+import 'package:food_delivery_app/utils/extensions.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -19,10 +26,6 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // User? _user;
-
   final _formKey = GlobalKey<FormState>();
 
   final _usernameController = TextEditingController();
@@ -35,223 +38,155 @@ class _RegisterFormState extends State<RegisterForm> {
 
   Map<String, dynamic> user = {};
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _auth.authStateChanges().listen((event) {
-  //     setState(() {
-  //       _user = event;
-  //     });
-  //   });
-  // }
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _passwordConfirmController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    
     return Form(
         key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _usernameController,
-              keyboardType: TextInputType.text,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              TextFormFieldWidget(
                 hintText: 'Username',
                 labelText: 'Username',
-                alignLabelWithHint: true,
-                prefixIcon: const Icon(Icons.person_2_outlined),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _usernameController,
+                icon: Icons.person,
+                textInputType: TextInputType.text,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Username is required';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormFieldWidget(
                 hintText: 'Email',
                 labelText: 'Email',
-                alignLabelWithHint: true,
-                prefixIcon: Icon(Icons.email_outlined),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _emailController,
+                icon: Icons.mail,
+                textInputType: TextInputType.emailAddress,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Email is required';
+                  }
+                  return val.isValidEmail;
+                },
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.number,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormFieldWidget(
                 hintText: 'Phone',
                 labelText: 'Phone',
-                alignLabelWithHint: true,
-                prefixIcon: Icon(Icons.phone_android),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _phoneController,
+                icon: Icons.phone_android,
+                textInputType: TextInputType.phone,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Phone number is required';
+                  }
+                  return val.isValidPhone;
+                },
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _passwordController,
-              keyboardType: TextInputType.visiblePassword,
-              cursorColor: Colors.orangeAccent,
-              obscureText: obscurePass,
-              decoration: InputDecoration(
-                  hintText: 'Password',
-                  labelText: 'Password',
-                  alignLabelWithHint: true,
-                  prefixIcon: Icon(Icons.lock_outline),
-                  prefixIconColor: Colors.orangeAccent,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                      color: Colors.orangeAccent,
-                      width: 2.0,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscurePass = !obscurePass;
-                      });
-                    },
-                    icon: obscurePass
-                        ? const Icon(
-                            Icons.visibility_off_outlined,
-                            color: Colors.black38,
-                          )
-                        : const Icon(
-                            Icons.visibility_outlined,
-                            color: Colors.orangeAccent,
-                          ),
-                  )),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _passwordConfirmController,
-              keyboardType: TextInputType.visiblePassword,
-              cursorColor: Colors.orangeAccent,
-              obscureText: obscurePassConfirm,
-              decoration: InputDecoration(
-                  hintText: 'Confirm Password',
-                  labelText: 'Confirm Password',
-                  alignLabelWithHint: true,
-                  prefixIcon: Icon(Icons.lock_outline),
-                  prefixIconColor: Colors.orangeAccent,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                      color: Colors.orangeAccent,
-                      width: 2.0,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscurePassConfirm = !obscurePassConfirm;
-                      });
-                    },
-                    icon: obscurePassConfirm
-                        ? const Icon(
-                            Icons.visibility_off_outlined,
-                            color: Colors.black38,
-                          )
-                        : const Icon(
-                            Icons.visibility_outlined,
-                            color: Colors.orangeAccent,
-                          ),
-                  )),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextButton(
-                onPressed: () async {
-                  final userRegistration = await DioProvider().register(
-                      _usernameController.text,
-                      _emailController.text,
-                      _phoneController.text,
-                      _passwordController.text,
-                      _passwordConfirmController.text);
+              const SizedBox(
+                height: 15,
+              ),
+              PasscodeTextFormFieldWidget(
+                hintText: 'Password',
+                labelText: 'Password',
+                controller: _passwordController,
+                icon: Icons.lock_clock_outlined,
+                textInputType: TextInputType.visiblePassword,
+                obscurePass: obscurePass,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Password is required';
+                  }
+                  return val.isValidPassword;
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              PasscodeTextFormFieldWidget(
+                hintText: 'Confirm Password',
+                labelText: 'Confirm Password',
+                controller: _passwordConfirmController,
+                icon: Icons.lock_clock_outlined,
+                textInputType: TextInputType.visiblePassword,
+                obscurePass: obscurePassConfirm,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Confirm password is required';
+                  }
+                  if (_passwordController.text != val) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      final userRegistration = await DioProvider().register(
+                          _usernameController.text,
+                          _emailController.text,
+                          _phoneController.text,
+                          _passwordController.text,
+                          _passwordConfirmController.text);
 
                       print(userRegistration);
 
-                  if (userRegistration != '') {
-                    user = json.decode(userRegistration);
-                    print(user);
+                      if (userRegistration != '') {
+                        user = json.decode(userRegistration);
+                        print(user);
 
-                    MyApp.navigatorKey.currentState!
-                        .pushNamed('reg_otp_verification', arguments: user);
-                  }
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                  overlayColor: MaterialStateProperty.all<Color>(
-                      Color.fromARGB(255, 179, 174, 174)),
-                ),
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                        MyApp.navigatorKey.currentState!
+                            .pushNamed('reg_otp_verification', arguments: user['email']);
+                      }
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                    overlayColor: MaterialStateProperty.all<Color>(
+                        Color.fromARGB(255, 179, 174, 174)),
                   ),
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            SignInButton(
-              Buttons.google,
-              onPressed: _handleGoogleSignIn,
-              text: 'Sign Up with Google',
-            )
-          ],
+                  child: const Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  )),
+              SizedBox(
+                height: 20,
+              ),
+              SignInButton(
+                Buttons.google,
+                onPressed: _handleGoogleSignIn,
+                text: 'Sign Up with Google',
+              )
+            ],
+          ),
         ));
   }
 
@@ -269,19 +204,17 @@ class _RegisterFormState extends State<RegisterForm> {
       GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
       AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken
-      );
+          accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
 
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user != null) {
         print(userCredential.user?.displayName);
 
-        
         var response = await DioProvider().signUpnWithGoogle(
-            userCredential.user?.email);
+            userCredential.user?.email,
+            userCredential.user?.displayName ?? 'no_user_name');
 
         print(response);
 
@@ -298,6 +231,16 @@ class _RegisterFormState extends State<RegisterForm> {
               print(userData);
 
               auth.loginSuccess(userData);
+
+              if (context.mounted) {
+                showDelighfulToast(
+                    context,
+                    "Hello ${userData['name'] ?? 'there'}, you are Logged In!",
+                    Theme.of(context).textTheme.headlineMedium?.color,
+                    Icons.person,
+                    Theme.of(context).canvasColor,
+                    Theme.of(context).canvasColor);
+              }
 
               MyApp.navigatorKey.currentState!.pushNamed('main_layout');
             });

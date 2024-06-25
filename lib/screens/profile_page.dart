@@ -1,8 +1,15 @@
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/components/delightful_toast.dart';
 import 'package:food_delivery_app/components/edit_form.dart';
+import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
+import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:food_delivery_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -23,25 +30,15 @@ class _ProfilePageState extends State<ProfilePage> {
             Consumer<AuthModel>(builder: (context, auth, child) {
               return Padding(
                   padding: EdgeInsets.only(right: 12),
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                                insetAnimationCurve: Curves.easeInOut,
-                                insetAnimationDuration:
-                                    const Duration(milliseconds: 500),
-                                insetPadding: EdgeInsets.all(30),
-                                child: EditForm(
-                                  email: auth.user['email'] ?? '',
-                                  phone: auth.user['phone'] ?? '',
-                                  address: auth.user['user_details']
-                                          ['address'] ??
-                                      '',
-                                  username: auth.user['name'] ?? '',
-                                ));
-                          });
+                      MyApp.navigatorKey.currentState!
+                          .pushNamed('edit_page', arguments: {
+                        'email': auth.user['email'] ?? '',
+                        'phone': auth.user['phone'] ?? '',
+                        'address': auth.user['user_details']['address'] ?? '',
+                        'username': auth.user['name'] ?? ''
+                      });
                     },
                     child: Icon(
                       Icons.edit,
@@ -118,7 +115,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Text(
                           auth.getUser['name'] ?? '',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
                         )
                       ]),
                     ),
@@ -137,7 +135,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(auth.getUser['email'] ?? ''),
-                    Text(auth.getUser['phone'] ?? ''),
+                    auth.getUser['phone'] != null
+                        ? Text(auth.getUser['phone'])
+                        : Text(
+                            'No specified Mobile Number',
+                            style: TextStyle(
+                                color: Colors.red, fontStyle: FontStyle.italic),
+                          ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -185,18 +189,52 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(
                 height: 70,
               ),
-              Center(
-                child: Container(
-                    margin: EdgeInsets.all(6),
-                    child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
-                        ))),
+              Consumer<AuthModel>(
+                builder: (context, auth, child) {
+                  return Center(
+                    child: Container(
+                        margin: EdgeInsets.all(6),
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              final SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              final token = prefs.getString('token') ?? '';
+                              var response = await DioProvider().logout(token);
+                              if (response == 200) {
+                                await prefs.remove('token');
+                                setState(() {
+                                  auth.token = '';
+
+                                  if (context.mounted) {
+                                    showDelighfulToast(
+                                        context,
+                                        "Logged Out!",
+                                        Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium
+                                            ?.color,
+                                        Icons.person,
+                                        Theme.of(context).canvasColor,
+                                        Theme.of(context).canvasColor);
+                                  }
+
+                                  MyApp.navigatorKey.currentState!
+                                      .pushReplacementNamed('/');
+                                });
+                              }
+                            },
+                            child: Text(
+                              'Logout',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.color,
+                              ),
+                            ))),
+                  );
+                },
               )
             ],
           );

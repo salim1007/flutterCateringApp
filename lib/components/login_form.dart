@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/components/delightful_toast.dart';
+import 'package:food_delivery_app/components/passcode_textformfield.dart';
+import 'package:food_delivery_app/components/textformfield.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:food_delivery_app/utils/extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,124 +26,116 @@ class _LoginFormState extends State<LoginForm> {
   bool obscurePass = true;
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              TextFormFieldWidget(
                 hintText: 'Email',
                 labelText: 'Email',
-                alignLabelWithHint: true,
-                prefixIcon: Icon(Icons.email_outlined),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _emailController,
+                icon: Icons.mail,
+                textInputType: TextInputType.emailAddress,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Email is required';
+                  }
+                  return val.isValidEmail;
+                },
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _passwordController,
-              keyboardType: TextInputType.visiblePassword,
-              cursorColor: Colors.orangeAccent,
-              obscureText: obscurePass,
-              decoration: InputDecoration(
-                  hintText: 'Password',
-                  labelText: 'Password',
-                  alignLabelWithHint: true,
-                  prefixIcon: Icon(Icons.lock_outline),
-                  prefixIconColor: Colors.orangeAccent,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                      color: Colors.orangeAccent,
-                      width: 2.0,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscurePass = !obscurePass;
-                      });
-                    },
-                    icon: obscurePass
-                        ? const Icon(
-                            Icons.visibility_off_outlined,
-                            color: Colors.black38,
-                          )
-                        : const Icon(
-                            Icons.visibility_outlined,
-                            color: Colors.orangeAccent,
-                          ),
-                  )),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Consumer<AuthModel>(builder: (context, auth, child) {
-              return TextButton(
-                  onPressed: () async {
-                    final response = await DioProvider().getToken(
-                        _emailController.text, _passwordController.text);
-                    if (response) {
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      final tokenValue = prefs.getString('token') ?? '';
+              const SizedBox(
+                height: 15,
+              ),
+              PasscodeTextFormFieldWidget(
+                hintText: 'Password',
+                labelText: 'Password',
+                controller: _passwordController,
+                icon: Icons.lock_clock_outlined,
+                textInputType: TextInputType.visiblePassword,
+                obscurePass: obscurePass,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Password is required';
+                  }
+                  return val.isValidPassword;
+                },
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Consumer<AuthModel>(builder: (context, auth, child) {
+                return TextButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        final response = await DioProvider().getToken(
+                            _emailController.text, _passwordController.text);
+                        if (response) {
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          final tokenValue = prefs.getString('token') ?? '';
 
-                      if (tokenValue.isNotEmpty && response != '') {
-                        final userDetail =
-                            await DioProvider().getUser(tokenValue);
+                          if (tokenValue.isNotEmpty && response != '') {
+                            final userDetail =
+                                await DioProvider().getUser(tokenValue);
 
-                        if (userDetail != null) {
-                          setState(() {
-                            final userData = json.decode(userDetail);
+                            if (userDetail != null) {
+                              setState(() {
+                                final userData = json.decode(userDetail);
 
-                            print(userData);
+                                print(userData);
 
-                            auth.loginSuccess(userData);
-                            print(auth.getAuthUserID);
+                                auth.loginSuccess(userData);
+                                print(auth.getAuthUserID);
+                              });
 
-                            MyApp.navigatorKey.currentState!
-                                .pushNamed('main_layout'); // arguments: userData
-                          });
+                              MyApp.navigatorKey.currentState!.pushNamed(
+                                  'main_layout'); // arguments: userData
+
+                              if (context.mounted) {
+                                showDelighfulToast(
+                                    context,
+                                    "Hello ${auth.getUser['name'] ?? 'there'}, you are Logged In!",
+                                    Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.color,
+                                    Icons.person,
+                                    Theme.of(context).canvasColor,
+                                    Theme.of(context).canvasColor);
+                              }
+                            }
+                          }
                         }
                       }
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                    overlayColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 179, 174, 174)),
-                  ),
-                  child: const Text(
-                    'Sign In',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                      overlayColor: MaterialStateProperty.all<Color>(
+                          Color.fromARGB(255, 179, 174, 174)),
                     ),
-                  ));
-            })
-          ],
+                    child: const Text(
+                      'Sign In',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ));
+              })
+            ],
+          ),
         ));
   }
 }

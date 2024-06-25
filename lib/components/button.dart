@@ -22,9 +22,10 @@ class Button extends StatelessWidget {
         onPressed: disable? null : onPressed,
         child: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.headlineMedium?.color,
           ),
         ),
       ),

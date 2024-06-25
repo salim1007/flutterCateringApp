@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/button.dart';
+import 'package:food_delivery_app/components/delightful_toast.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/models/date_time_convert.dart';
@@ -25,7 +29,6 @@ class _BookingPageState extends State<BookingPage> {
   bool _timeSelected = false;
   int quantity = 1;
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +41,9 @@ class _BookingPageState extends State<BookingPage> {
           backgroundColor: Colors.orangeAccent,
         ),
         body: Container(
-          padding: EdgeInsets.all(30),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width > 550
+              ? MediaQuery.of(context).size.width * 0.16
+              : MediaQuery.of(context).size.width * 0.03),
           child: CustomScrollView(
             primary: true,
             slivers: <Widget>[
@@ -50,14 +55,22 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Text('Select Date',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width > 550
+                              ? MediaQuery.of(context).size.width * 0.022
+                              : 16,
+                        )),
                     _tableCalendar(),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                       child: Text('Select Time',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width > 550
+                                ? MediaQuery.of(context).size.width * 0.022
+                                : 16,
+                          )),
                     )
                   ],
                 ),
@@ -89,7 +102,9 @@ class _BookingPageState extends State<BookingPage> {
                           '${index + 9}:00 ${index + 9 > 11 ? 'PM' : 'AM'}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                            fontSize: MediaQuery.of(context).size.width > 550
+                                ? MediaQuery.of(context).size.width * 0.022
+                                : 12,
                             color: _currentIndex == index ? Colors.white : null,
                           ),
                         ),
@@ -115,7 +130,10 @@ class _BookingPageState extends State<BookingPage> {
                     children: [
                       Text('Number of people',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                              fontSize: MediaQuery.of(context).size.width > 550
+                                  ? MediaQuery.of(context).size.width * 0.022
+                                  : 16,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 15,
                       ),
@@ -140,9 +158,12 @@ class _BookingPageState extends State<BookingPage> {
                                     }
                                   });
                                 },
-                                child: const FaIcon(
+                                child: FaIcon(
                                   FontAwesomeIcons.minus,
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.color,
                                   size: 18,
                                 )),
                           ),
@@ -151,8 +172,7 @@ class _BookingPageState extends State<BookingPage> {
                           ),
                           Text(
                             '$quantity',
-                            style: TextStyle(
-                                backgroundColor: Colors.white, fontSize: 21),
+                            style: TextStyle(fontSize: 21),
                           ),
                           SizedBox(
                             width: 10,
@@ -170,9 +190,12 @@ class _BookingPageState extends State<BookingPage> {
                                     quantity++;
                                   });
                                 },
-                                child: const FaIcon(
+                                child: FaIcon(
                                   FontAwesomeIcons.plus,
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.color,
                                   size: 18,
                                 )),
                           ),
@@ -188,7 +211,7 @@ class _BookingPageState extends State<BookingPage> {
                         horizontal: 10, vertical: 50),
                     child: Button(
                       width: double.infinity,
-                      height: 40,
+                      height: MediaQuery.of(context).size.width > 550 ? 50 : 40,
                       title: "Book",
                       onPressed: () async {
                         var authModel =
@@ -213,6 +236,20 @@ class _BookingPageState extends State<BookingPage> {
                           setState(() {
                             authModel.updateBookings(json.decode(bookings));
                           });
+
+                          if (context.mounted) {
+                            showDelighfulToast(
+                                context,
+                                "Booking placed successfully!",
+                                Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.color,
+                                Icons.book_online,
+                                Theme.of(context).canvasColor,
+                                Theme.of(context).canvasColor);
+                          }
+
                           MyApp.navigatorKey.currentState!
                               .pushNamed('book_list');
                         }
@@ -232,12 +269,17 @@ class _BookingPageState extends State<BookingPage> {
       lastDay: DateTime(2030, 12, 31),
       calendarFormat: _calFormat,
       currentDay: _currentDay,
-      rowHeight: 48,
-      calendarStyle: const CalendarStyle(
-          todayDecoration: BoxDecoration(
-        color: Colors.orangeAccent,
-        shape: BoxShape.circle,
-      )),
+      rowHeight: MediaQuery.of(context).size.width > 550
+          ? MediaQuery.of(context).size.width * 0.06
+          : 48,
+      calendarStyle: CalendarStyle(
+          selectedTextStyle: TextStyle(
+            fontSize: MediaQuery.of(context).size.width * 0.4,
+          ),
+          todayDecoration: const BoxDecoration(
+            color: Colors.orangeAccent,
+            shape: BoxShape.circle,
+          )),
       availableCalendarFormats: const {CalendarFormat.month: 'Month'},
       onFormatChanged: (format) {
         setState(() {

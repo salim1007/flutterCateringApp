@@ -39,17 +39,29 @@ class _BookListState extends State<BookList>
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            bottom: TabBar(controller: _tabController, tabs: const [
-              Tab(
-                child: Text('upcoming'),
-              ),
-              Tab(
-                child: Text('completed'),
-              ),
-              Tab(
-                child: Text('canceled'),
-              ),
-            ]),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            bottom: TabBar(
+                controller: _tabController,
+                indicatorColor: Theme.of(context).primaryColor,
+                labelColor: Theme.of(context).textTheme.headlineMedium?.color,
+                unselectedLabelColor: Theme.of(context).primaryColor,
+                tabs: const [
+                  Tab(
+                    child: Text(
+                      'upcoming',
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      'completed',
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      'canceled',
+                    ),
+                  ),
+                ]),
             title: const Text(
               'Your Bookings',
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -91,6 +103,7 @@ class _BookListState extends State<BookList>
                                   'Table Structure: ${item['no_of_people']} chair(s)',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).iconTheme.color
                                   ),
                                 )),
                             SizedBox(
@@ -107,13 +120,13 @@ class _BookListState extends State<BookList>
                                 children: [
                                   Text(item['day'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                   Text(item['date'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                   Text(item['time'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                 ],
                               ),
                             ),
@@ -143,8 +156,8 @@ class _BookListState extends State<BookList>
                                                     authModel.getAuthUserID,
                                                     authModel.getAuthUserToken);
                                             setState(() {
-                                              authModel
-                                                  .updateBookings(json.decode(bookings));
+                                              authModel.updateBookings(
+                                                  json.decode(bookings));
                                             });
                                             _tabController?.animateTo(1);
                                           }
@@ -163,17 +176,19 @@ class _BookListState extends State<BookList>
                                               Provider.of<AuthModel>(context,
                                                   listen: false);
                                           final response = await DioProvider()
-                                              .changeBookStatus('canceled',
-                                                  item['id'], authModel.getAuthUserToken);
+                                              .changeBookStatus(
+                                                  'canceled',
+                                                  item['id'],
+                                                  authModel.getAuthUserToken);
 
                                           if (response) {
-                                             var bookings = await DioProvider()
+                                            var bookings = await DioProvider()
                                                 .fetchBooks(
                                                     authModel.getAuthUserID,
                                                     authModel.getAuthUserToken);
                                             setState(() {
-                                              authModel
-                                                  .updateBookings(json.decode(bookings));
+                                              authModel.updateBookings(
+                                                  json.decode(bookings));
                                             });
                                             _tabController?.animateTo(2);
                                           }
@@ -202,7 +217,7 @@ class _BookListState extends State<BookList>
                         margin: EdgeInsets.all(20),
                         padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                            color: Colors.orangeAccent,
+                            color: Color.fromARGB(255, 154, 224, 157),
                             borderRadius: BorderRadius.circular(10)),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -212,12 +227,13 @@ class _BookListState extends State<BookList>
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: Color.fromARGB(255, 223, 219, 214),
+                                  color: Color.fromARGB(255, 149, 187, 151),
                                 ),
                                 child: Text(
                                   'Table Structure: ${item['no_of_people']} chair(s)',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).iconTheme.color
                                   ),
                                 )),
                             SizedBox(
@@ -226,7 +242,7 @@ class _BookListState extends State<BookList>
                             Container(
                               padding: EdgeInsets.all(15),
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 223, 219, 214),
+                                  color:  Color.fromARGB(255, 149, 187, 151),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Row(
                                 mainAxisAlignment:
@@ -234,13 +250,13 @@ class _BookListState extends State<BookList>
                                 children: [
                                   Text(item['day'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                   Text(item['date'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                   Text(item['time'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                 ],
                               ),
                             ),
@@ -264,7 +280,7 @@ class _BookListState extends State<BookList>
                         margin: EdgeInsets.all(20),
                         padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                            color: Colors.orangeAccent,
+                            color: Color.fromARGB(255, 195, 87, 80),
                             borderRadius: BorderRadius.circular(10)),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -274,12 +290,13 @@ class _BookListState extends State<BookList>
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: Color.fromARGB(255, 224, 106, 98),
+                                  color: Color.fromARGB(255, 241, 124, 116),
                                 ),
                                 child: Text(
                                   'Table Structure: ${item['no_of_people']} chair(s)',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).iconTheme.color
                                   ),
                                 )),
                             SizedBox(
@@ -288,21 +305,21 @@ class _BookListState extends State<BookList>
                             Container(
                               padding: EdgeInsets.all(15),
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 224, 106, 98),
+                                  color: Color.fromARGB(255, 241, 124, 116),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(item['day'],
+                                   Text(item['day'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                   Text(item['date'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                   Text(item['time'],
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold, color: Theme.of(context).iconTheme.color)),
                                 ],
                               ),
                             ),

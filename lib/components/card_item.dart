@@ -36,15 +36,16 @@ class _CardItemState extends State<CardItem> {
               arguments: {'product': widget.product, 'category': category});
         },
         child: Container(
-          height: 300,
+         
+          height: MediaQuery.of(context).size.width > 550 ? MediaQuery.of(context).size.height * 0.5 : MediaQuery.of(context).size.height * 0.3,
           margin: EdgeInsets.all(5),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 margin: EdgeInsets.all(5),
-                height: 169,
-                width: 150,
+                height: MediaQuery.of(context).size.width > 550 ? MediaQuery.of(context).size.height * 0.27 : MediaQuery.of(context).size.height * 0.22,
+                width: MediaQuery.of(context).size.width * 0.4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: Colors.orangeAccent,
@@ -55,28 +56,33 @@ class _CardItemState extends State<CardItem> {
                   ),
                 ),
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.star,
-                    size: 15,
+                    size: MediaQuery.of(context).size.width *  0.028,
                     color: Colors.yellowAccent,
                   ),
                   Text(
                     '4.7',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width *  0.025,
+                        fontWeight: FontWeight.bold),
                   )
                 ],
               ),
               Text(
                 widget.product['product_name'],
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width *  0.025,
+                    fontWeight: FontWeight.bold),
               ),
               Text(
                 'Tsh. $formattedPrice/=',
-                style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width *  0.025,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),

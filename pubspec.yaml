@@ -52,6 +52,13 @@ dependencies:
   cupertino_icons: ^1.0.6
   geocoding: ^3.0.0
   google_sign_in: ^6.2.1
+  delightful_toast: ^1.1.0
+  flutter_animate: ^4.5.0
+  animated_icon: ^0.0.9
+  fluttertoast: ^8.2.6
+  pinput: ^5.0.0
+
+  
 
 dev_dependencies:
   flutter_test:

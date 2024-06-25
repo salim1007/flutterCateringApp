@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:food_delivery_app/components/image_slider.dart';
 import 'package:food_delivery_app/firebase_options.dart';
 import 'package:food_delivery_app/main_layout.dart';
@@ -8,13 +9,17 @@ import 'package:food_delivery_app/providers/theme_provider.dart';
 import 'package:food_delivery_app/screens/auth_page.dart';
 import 'package:food_delivery_app/screens/book_list.dart';
 import 'package:food_delivery_app/screens/cart_page.dart';
+import 'package:food_delivery_app/screens/edit_page.dart';
 import 'package:food_delivery_app/screens/favourites_page.dart';
 import 'package:food_delivery_app/screens/item_details.dart';
 import 'package:food_delivery_app/screens/notification_layout.dart';
 import 'package:food_delivery_app/screens/notification_page.dart';
 import 'package:food_delivery_app/screens/order_page.dart';
 import 'package:food_delivery_app/screens/otp_verification.dart';
+import 'package:food_delivery_app/screens/password_renewal_page.dart';
+import 'package:food_delivery_app/screens/profile_page.dart';
 import 'package:food_delivery_app/screens/search_page.dart';
+import 'package:food_delivery_app/screens/verify_email.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -22,6 +27,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 
@@ -62,6 +72,10 @@ class MyApp extends StatelessWidget {
             'favourites_page': (context) => const FavouritesPage(),
             'notification_layout': (context) => const NotificationLayout(),
             'notification_page': (context) => const NotificationPage(),
+            'edit_page':(context) => const EditPage(),
+            'profile_page':(context) => const ProfilePage(),
+            'verify_email':(context) => const VerifyEmail(),
+            'renew_password':(context) => const PasswordRenewalPage(),
           },
         );
       },

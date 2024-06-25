@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -31,21 +30,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getProducts();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getNotificationState();
-    });
-  }
-
-  Future<void> _getNotificationState() async {
-    var authModel = Provider.of<AuthModel>(context, listen: false);
-    var response = await DioProvider()
-        .getNotifications(authModel.getAuthUserID, authModel.getAuthUserToken);
-        print(response);
-    if (response != null) {
-      setState(() {
-        notifications = response;
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   Future<void> _getProducts() async {
@@ -57,12 +42,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var authModel = Provider.of<AuthModel>(context, listen: false);
     userDetails = Provider.of<AuthModel>(context, listen: false).getUser;
     favList = Provider.of<AuthModel>(context, listen: false).getFav;
     currentAddress =
         Provider.of<AuthModel>(context, listen: false).getCurrentLocation;
-
-       TextTheme _textTheme = Theme.of(context).textTheme;
 
     print('user data is: $userDetails');
     print('favlist is data is: $favList');
@@ -80,22 +64,68 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     'Welcome ${userDetails['name'] ?? ''}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                        fontWeight: FontWeight.bold),
                   ),
-                  GestureDetector(
-                    onTap: () {
-
-                      MyApp.navigatorKey.currentState!.pushNamed('notification_page', arguments: notifications);
-                    },
-                    child: notifications > 0
-                        ? Lottie.asset('assets/bell.json',
-                            width: 50, height: 50)
-                        :  Icon(
-                            FontAwesomeIcons.solidBell,
-                            color: Theme.of(context).textTheme.headlineMedium?.color,
-                            size: 20,
-                          ),
-                  ),
+                  FutureBuilder(
+                      future: Future.delayed(const Duration(seconds: 1), () {
+                        return DioProvider().getNotifications(
+                            authModel.getAuthUserID,
+                            authModel.getAuthUserToken);
+                      }),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return GestureDetector(
+                            onTap: () {
+                              MyApp.navigatorKey.currentState!.pushNamed(
+                                  'notification_page',
+                                  arguments: notifications);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Icon(
+                                FontAwesomeIcons.solidBell,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.color,
+                                size: 20,
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.done) {
+                          return GestureDetector(
+                            onTap: () {
+                              MyApp.navigatorKey.currentState!.pushNamed(
+                                  'notification_page',
+                                  arguments: snapshot.data);
+                            },
+                            child: snapshot.data > 0
+                                ? Lottie.asset('assets/bell.json',
+                                    width: 40, height: 40)
+                                : Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Icon(
+                                      FontAwesomeIcons.solidBell,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.color,
+                                      size: 20,
+                                    ),
+                                  ),
+                          );
+                        }
+                        return Icon(
+                          FontAwesomeIcons.solidBell,
+                          color:
+                              Theme.of(context).textTheme.headlineMedium?.color,
+                          size: 20,
+                        );
+                      })
                 ],
               ),
               const SizedBox(
@@ -104,7 +134,11 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  FaIcon(FontAwesomeIcons.locationDot, color: Theme.of(context).textTheme.headlineMedium?.color, size: 15,),
+                  FaIcon(
+                    FontAwesomeIcons.locationDot,
+                    color: Theme.of(context).textTheme.headlineMedium?.color,
+                    size: 15,
+                  ),
                   const SizedBox(
                     width: 5,
                   ),
@@ -134,8 +168,8 @@ class _HomePageState extends State<HomePage> {
                   MyApp.navigatorKey.currentState!.pushNamed('search_page');
                 },
                 hintText: 'Search...',
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Theme.of(context).cardColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Theme.of(context).cardColor),
               ),
               SizedBox(
                 height: 15,
@@ -180,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                         height: 15,
                       ),
                       SizedBox(
-                        height: 100,
+                        height: MediaQuery.of(context).size.height * 0.14,
                         width: double.infinity,
                         child: GridView.builder(
                           scrollDirection: Axis.horizontal,
@@ -205,19 +239,28 @@ class _HomePageState extends State<HomePage> {
                                 margin: const EdgeInsets.all(5),
                                 color: Theme.of(context).cardColor,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 10),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        MediaQuery.of(context).size.width *
+                                            0.04,
+                                    vertical:
+                                        MediaQuery.of(context).size.height *
+                                            0.02,
+                                  ),
                                   child: Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: <Widget>[
-                                      const SizedBox(
-                                        width: 20,
-                                      ),
                                       Text(
                                         userDetails['categories'][index]
                                             ['category_name'],
-                                        style: _textTheme.headlineMedium,
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.025,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),

@@ -1,8 +1,15 @@
 import 'dart:convert';
 
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/components/delightful_toast.dart';
+import 'package:food_delivery_app/components/textformfield.dart';
+import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:food_delivery_app/utils/extensions.dart';
 import 'package:provider/provider.dart';
 
 class EditForm extends StatefulWidget {
@@ -42,144 +49,128 @@ class _EditFormState extends State<EditForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 420,
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width > 550
+          ? MediaQuery.of(context).size.width * 0.24
+          : MediaQuery.of(context).size.width * 0.01),
       margin: EdgeInsets.all(15),
       child: Form(
         key: _formKey,
-        child: Column(
-          children: [
-            Text(
-              'Edit Profile',
-              style: TextStyle(fontSize: 16, color: Colors.orange[700], fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: _usernameController,
-              keyboardType: TextInputType.name,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Text(
+                'Edit Profile',
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).highlightColor,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              TextFormFieldWidget(
+                hintText: 'Username',
                 labelText: 'Username',
-                prefixIcon: Icon(Icons.person),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _usernameController,
+                icon: Icons.person,
+                textInputType: TextInputType.name,
+                validator: (val) {
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormFieldWidget(
+                hintText: 'Email',
                 labelText: 'Email',
-                prefixIcon: Icon(Icons.email_outlined),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _emailController,
+                icon: Icons.mail,
+                textInputType: TextInputType.emailAddress,
+                validator: (val) {
+                  return val!.isValidEmail;
+                },
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormFieldWidget(
+                hintText: 'Phone',
                 labelText: 'Phone',
-                prefixIcon: Icon(Icons.phone),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _phoneController,
+                icon: Icons.phone_android,
+                textInputType: TextInputType.phone,
+                validator: (val) {
+                  return val!.isValidPhone;
+                },
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: _addressController,
-              keyboardType: TextInputType.streetAddress,
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormFieldWidget(
+                hintText: 'Address',
                 labelText: 'Address',
-                prefixIcon: Icon(Icons.home),
-                prefixIconColor: Colors.orangeAccent,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Colors.orangeAccent,
-                    width: 2.0,
-                  ),
-                ),
+                controller: _addressController,
+                icon: Icons.home,
+                textInputType: TextInputType.streetAddress,
+                validator: (val) {
+                  return null;
+                },
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Consumer<AuthModel>(builder: (context, auth, child) {
-              return TextButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                  ),
-                  onPressed: () async {
-                    var response = await DioProvider().updateProfile(
-                        auth.getAuthUserID,
-                        _usernameController.text,
-                        _emailController.text,
-                        _phoneController.text,
-                        _addressController.text,
-                        auth.getAuthUserToken);
+              SizedBox(
+                height: 10,
+              ),
+              Consumer<AuthModel>(builder: (context, auth, child) {
+                return TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        var response = await DioProvider().updateProfile(
+                            auth.getAuthUserID,
+                            _usernameController.text,
+                            _emailController.text,
+                            _phoneController.text,
+                            _addressController.text,
+                            auth.getAuthUserToken);
 
-                        
                         print(auth.getAuthUserID);
 
-                        if(response != ''){
-                          
-                          var newUserData = await DioProvider().getUser(auth.getAuthUserToken);
+                        if (response != '') {
+                          var newUserData = await DioProvider()
+                              .getUser(auth.getAuthUserToken);
                           auth.updateUser(json.decode(newUserData));
+
+                          if (context.mounted) {
+                            showDelighfulToast(
+                                context,
+                                "Profile updated successfully!",
+                                Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.color,
+                                Icons.person,
+                                Theme.of(context).canvasColor,
+                                Theme.of(context).canvasColor);
+                          }
+
+                          MyApp.navigatorKey.currentState!.pop();
                         }
-                  },
-                  child: const Text(
-                    'Update',
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                  ));
-            })
-          ],
+                      }
+                    },
+                    child: const Text(
+                      'Update',
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ));
+              })
+            ],
+          ),
         ),
       ),
     );

@@ -19,7 +19,7 @@ class OrderTimeLine extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(left: 20, top: 10),
       child: SizedBox(
-        height: 140,
+        height: MediaQuery.of(context).size.height * 0.15,
         child: TimelineTile(
           isFirst: isFirst,
           isLast: isLast,
@@ -29,8 +29,12 @@ class OrderTimeLine extends StatelessWidget {
                   : Colors.grey),
           indicatorStyle: IndicatorStyle(
               width: 30,
-              color: isFirst == true || isPast == true ? Colors.orangeAccent : Colors.grey,
-              iconStyle: isFirst == true || isPast == true ? IconStyle(iconData: Icons.done, color: Colors.white) : null),
+              color: isFirst == true || isPast == true
+                  ? Colors.orangeAccent
+                  : Colors.grey,
+              iconStyle: isFirst == true || isPast == true
+                  ? IconStyle(iconData: Icons.done, color: Colors.white)
+                  : null),
           endChild: ProgressCard(
             isPast: isPast,
             child: progressCard,

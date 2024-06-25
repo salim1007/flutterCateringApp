@@ -24,14 +24,14 @@ class NotificationPage extends StatelessWidget {
         backgroundColor: Colors.orangeAccent,
       ),
       body: Container(
-        
         child: Column(
           children: [
             Container(
               height: 70,
+
               width: double.infinity,
               decoration: BoxDecoration(
-                  color: Colors.orangeAccent,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20))),
@@ -46,9 +46,9 @@ class NotificationPage extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.all(10),
-             
               padding: EdgeInsets.all(10),
-              child: GestureDetector(
+              child: InkWell(
+                splashColor: Theme.of(context).scaffoldBackgroundColor,
                 onTap: () async{
                   await DioProvider().updateSeenNotifications(authModel.getAuthUserID, authModel.getAuthUserToken);
                   int newNoficationCount = await DioProvider().getNotifications(authModel.getAuthUserID, authModel.getAuthUserToken);

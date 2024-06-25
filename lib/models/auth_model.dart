@@ -180,10 +180,8 @@ class AuthModel extends ChangeNotifier {
     var bookings = await DioProvider().fetchBooks(user['id'], token);
     var authUserBookings = json.decode(bookings);
     print('authUserBookings: $authUserBookings'); // Debug line
-    //
-    // var orders = await DioProvider().getAuthUserOrders(user['id'], token);
-    // var authUserOrders = json.decode(orders);
-    // print('authUserOrders: $authUserOrders'); // Debug line
+    
+    
 
     var cart = await DioProvider().getUserCart(user['id']);
     var authUserCart = json.decode(cart);

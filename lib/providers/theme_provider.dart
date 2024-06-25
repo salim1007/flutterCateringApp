@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeMode themeMode = ThemeMode.dark;
+  ThemeMode themeMode = ThemeMode.light;
 
   bool get isDarkMode {
-    return themeMode == ThemeMode.dark;
+    return themeMode == ThemeMode.light;
   }
 
   void toogleTheme(bool isOn) {
-    themeMode = isOn ? ThemeMode.dark : ThemeMode.light;
+    themeMode = isOn ? ThemeMode.light : ThemeMode.dark;
     notifyListeners();
   }
 }
@@ -25,6 +25,8 @@ class MyThemes {
         backgroundColor: Colors.grey[800],
       ),
       cardColor: Colors.orangeAccent,
+      canvasColor: Colors.grey[800],
+      highlightColor: Colors.orangeAccent,
       iconTheme: const IconThemeData(color: Colors.black));
 
   static final lightTheme = ThemeData(
@@ -38,5 +40,7 @@ class MyThemes {
       ),
       cardColor: Colors.orangeAccent,
       primaryColor: Colors.orangeAccent,
+      canvasColor:const Color.fromARGB(255, 233, 224, 211),
+      highlightColor: Colors.orange[700],
       iconTheme: const IconThemeData(color: Colors.black));
 }

@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/components/otp_input.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_delivery_app/components/delightful_toast.dart';
+import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,16 +19,12 @@ class OtpVerification extends StatefulWidget {
 }
 
 class _OtpVerificationState extends State<OtpVerification> {
-  final TextEditingController _fieldOne = TextEditingController();
-  final TextEditingController _fieldTwo = TextEditingController();
-  final TextEditingController _fieldThree = TextEditingController();
-  final TextEditingController _fieldFour = TextEditingController();
-  final TextEditingController _fieldFive = TextEditingController();
-  final TextEditingController _fieldSix = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _pinController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final userData = ModalRoute.of(context)!.settings.arguments as Map;
+    final userEmail = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(
@@ -53,42 +52,27 @@ class _OtpVerificationState extends State<OtpVerification> {
               const SizedBox(
                 height: 20,
               ),
-              const Text(
+              Text(
                 'A One-Time-Password was sent to your Email, enter the OTP',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.035,
+                    fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(
                 height: 30,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  OtpInput(
-                    autoFocus: true,
-                    controller: _fieldOne,
-                  ),
-                  OtpInput(
-                    autoFocus: false,
-                    controller: _fieldTwo,
-                  ),
-                  OtpInput(
-                    autoFocus: false,
-                    controller: _fieldThree,
-                  ),
-                  OtpInput(
-                    autoFocus: false,
-                    controller: _fieldFour,
-                  ),
-                  OtpInput(
-                    autoFocus: false,
-                    controller: _fieldFive,
-                  ),
-                  OtpInput(
-                    autoFocus: false,
-                    controller: _fieldSix,
-                  ),
-                ],
+              Form(
+                key: _formKey,
+                child: Pinput(
+                  controller: _pinController,
+                  length: 5,
+                  useNativeKeyboard: true,
+                  pinAnimationType: PinAnimationType.slide,
+                  validator: (value) {
+                    return value!.isEmpty ? 'OTP is required' : null;
+                  },
+                ),
               ),
               SizedBox(
                 height: 30,
@@ -96,39 +80,58 @@ class _OtpVerificationState extends State<OtpVerification> {
               Consumer<AuthModel>(builder: (context, auth, child) {
                 return TextButton(
                     onPressed: () async {
-                      String otpString = _fieldOne.text +
-                          _fieldTwo.text +
-                          _fieldThree.text +
-                          _fieldFour.text +
-                          _fieldFive.text +
-                          _fieldSix.text;
+                      if (_formKey.currentState!.validate()) {
+                        final otpVerification = await DioProvider()
+                            .verifyOtp(_pinController.text, userEmail);
 
-                      final otpVerification = await DioProvider()
-                          .verifyOtp(otpString, userData['email']);
+                        if (otpVerification['status'] == true) {
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          final tokenValue = prefs.getString('token') ?? '';
 
-                      if (otpVerification) {
-                        final SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        final tokenValue = prefs.getString('token') ?? '';
+                          if (tokenValue.isNotEmpty && otpVerification != '') {
+                            final userDetail =
+                                await DioProvider().getUser(tokenValue);
 
-                        if (tokenValue.isNotEmpty && otpVerification != '') {
-                          final userDetail =
-                              await DioProvider().getUser(tokenValue);
+                            if (userDetail != null) {
+                              setState(() {
+                                final userData = json.decode(userDetail);
 
-                          if (userDetail != null) {
-                            setState(() {
-                              final userData = json.decode(userDetail);
+                                print(userData);
 
-                              print(userData);
+                                auth.loginSuccess(userData);
 
-                              auth.loginSuccess(userData);
+                                MyApp.navigatorKey.currentState!
+                                    .pushNamed('main_layout');
+                              });
 
-                              MyApp.navigatorKey.currentState!
-                                  .pushNamed('main_layout');
-                            });
+                              if (context.mounted) {
+                                showDelighfulToast(
+                                    context,
+                                    "Hello ${auth.getUser['name'] ?? 'there'}, you are Logged In!",
+                                    Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.color,
+                                    Icons.person,
+                                    Theme.of(context).canvasColor,
+                                    Theme.of(context).canvasColor);
+                              }
+                            }
+                          }
+                        } else if (otpVerification['status'] == false) {
+                          if (context.mounted) {
+                            showToast(
+                                otpVerification['feedback'],
+                                Theme.of(context).canvasColor,
+                                Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.color,
+                                MediaQuery.of(context).size.width * 0.035,
+                                ToastGravity.TOP);
                           }
                         }
-                       
                       }
                     },
                     style: ButtonStyle(
@@ -137,12 +140,13 @@ class _OtpVerificationState extends State<OtpVerification> {
                       overlayColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 179, 174, 174)),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Verify',
                       style: TextStyle(
-                        fontSize: 18,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        fontSize: MediaQuery.of(context).size.width * 0.035,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ));
               })

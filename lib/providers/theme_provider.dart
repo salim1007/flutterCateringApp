@@ -25,6 +25,7 @@ class MyThemes {
         backgroundColor: Colors.grey[800],
       ),
       cardColor: Colors.orangeAccent,
+      hintColor: Colors.orangeAccent,
       canvasColor: Colors.grey[800],
       highlightColor: Colors.orangeAccent,
       iconTheme: const IconThemeData(color: Colors.black));
@@ -39,6 +40,7 @@ class MyThemes {
         backgroundColor: Colors.orange[200],
       ),
       cardColor: Colors.orangeAccent,
+      hintColor: Colors.black,
       primaryColor: Colors.orangeAccent,
       canvasColor:const Color.fromARGB(255, 233, 224, 211),
       highlightColor: Colors.orange[700],

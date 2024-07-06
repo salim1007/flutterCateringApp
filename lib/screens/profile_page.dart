@@ -1,9 +1,6 @@
-import 'package:delightful_toast/delight_toast.dart';
-import 'package:delightful_toast/toast/components/toast_card.dart';
-import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/components/delightful_toast.dart';
-import 'package:food_delivery_app/components/edit_form.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
@@ -136,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Text(auth.getUser['email'] ?? ''),
                     auth.getUser['phone'] != null
-                        ? Text(auth.getUser['phone'])
+                        ? Text("(+255) ${auth.getUser['phone']}")
                         : Text(
                             'No specified Mobile Number',
                             style: TextStyle(
@@ -201,26 +198,28 @@ class _ProfilePageState extends State<ProfilePage> {
                               final token = prefs.getString('token') ?? '';
                               var response = await DioProvider().logout(token);
                               if (response == 200) {
-                                await prefs.remove('token');
+                                await Future.wait([
+                                  prefs.remove('token'),
+                                  prefs.remove('isLoggedIn'),
+                                ]);
                                 setState(() {
                                   auth.token = '';
-
-                                  if (context.mounted) {
-                                    showDelighfulToast(
-                                        context,
-                                        "Logged Out!",
-                                        Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium
-                                            ?.color,
-                                        Icons.person,
-                                        Theme.of(context).canvasColor,
-                                        Theme.of(context).canvasColor);
-                                  }
-
-                                  MyApp.navigatorKey.currentState!
-                                      .pushReplacementNamed('/');
                                 });
+
+                                if (context.mounted) {
+                                  showToast(
+                                      'Logged Out!',
+                                      Theme.of(context).canvasColor,
+                                      Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.color,
+                                      MediaQuery.of(context).size.width * 0.035,
+                                      ToastGravity.TOP);
+                                }
+
+                                MyApp.navigatorKey.currentState!
+                                    .pushReplacementNamed('auth_page');
                               }
                             },
                             child: Text(

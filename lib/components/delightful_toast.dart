@@ -13,6 +13,7 @@ void showDelighfulToast(BuildContext context, String message, Color? cardColor, 
                   color: iconColor,
                 ),
                 title: Text(
+                  textAlign: TextAlign.justify,
                   message,
                   style: TextStyle(
                       fontSize: 14,
@@ -22,6 +23,6 @@ void showDelighfulToast(BuildContext context, String message, Color? cardColor, 
               ),
           position: DelightSnackbarPosition.top,
           autoDismiss: true,
-          snackbarDuration: const Duration(seconds: 3))
+          snackbarDuration: const Duration(seconds: 2))
       .show(context);
 }

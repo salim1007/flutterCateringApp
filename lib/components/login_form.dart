@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_delivery_app/components/delightful_toast.dart';
 import 'package:food_delivery_app/components/passcode_textformfield.dart';
 import 'package:food_delivery_app/components/textformfield.dart';
+import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
@@ -24,6 +26,8 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool obscurePass = true;
+
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -68,71 +72,94 @@ class _LoginFormState extends State<LoginForm> {
                   if (val!.isEmpty) {
                     return 'Password is required';
                   }
-                  return val.isValidPassword;
+                  return null;
                 },
               ),
               const SizedBox(
                 height: 30,
               ),
               Consumer<AuthModel>(builder: (context, auth, child) {
-                return TextButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final response = await DioProvider().getToken(
-                            _emailController.text, _passwordController.text);
-                        if (response) {
-                          final SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          final tokenValue = prefs.getString('token') ?? '';
+                return isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.orangeAccent,
+                        ),
+                      )
+                    : TextButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            var response = await DioProvider().getToken(
+                                _emailController.text,
+                                _passwordController.text);
 
-                          if (tokenValue.isNotEmpty && response != '') {
-                            final userDetail =
-                                await DioProvider().getUser(tokenValue);
+                            if (response['status'] == 200) {
+                              final SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              final tokenValue = prefs.getString('token') ?? '';
 
-                            if (userDetail != null) {
+                              if (tokenValue.isNotEmpty && response != '') {
+                                final userDetail =
+                                    await DioProvider().getUser(tokenValue);
+
+                                if (userDetail != null) {
+                                  setState(() {
+                                    final userData = json.decode(userDetail);
+
+                                    print(userData);
+
+                                    auth.loginSuccess(userData);
+                                    print(auth.getAuthUserID);
+                                  });
+
+                                  MyApp.navigatorKey.currentState!
+                                      .pushNamed('main_layout');
+
+                                  if (context.mounted) {
+                                    showDelighfulToast(
+                                        context,
+                                        "Hello ${auth.getUser['name'] ?? 'there'}, you are Logged In!",
+                                        Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium
+                                            ?.color,
+                                        Icons.person,
+                                        Theme.of(context).canvasColor,
+                                        Theme.of(context).canvasColor);
+                                  }
+                                }
+                              }
+                            } else if (response['status'] == 401) {
                               setState(() {
-                                final userData = json.decode(userDetail);
-
-                                print(userData);
-
-                                auth.loginSuccess(userData);
-                                print(auth.getAuthUserID);
+                                isLoading = false;
                               });
-
-                              MyApp.navigatorKey.currentState!.pushNamed(
-                                  'main_layout'); // arguments: userData
-
                               if (context.mounted) {
-                                showDelighfulToast(
-                                    context,
-                                    "Hello ${auth.getUser['name'] ?? 'there'}, you are Logged In!",
-                                    Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium
-                                        ?.color,
-                                    Icons.person,
-                                    Theme.of(context).canvasColor,
-                                    Theme.of(context).canvasColor);
+                                showToast(
+                                    response['data'],
+                                    Colors.redAccent,
+                                    Colors.white,
+                                    MediaQuery.of(context).size.width * 0.035,
+                                    ToastGravity.TOP);
                               }
                             }
                           }
-                        }
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                      overlayColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(255, 179, 174, 174)),
-                    ),
-                    child: const Text(
-                      'Sign In',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ));
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.orangeAccent),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                              Color.fromARGB(255, 179, 174, 174)),
+                        ),
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ));
               })
             ],
           ),

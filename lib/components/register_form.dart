@@ -1,17 +1,15 @@
 import 'dart:convert';
 
-import 'package:delightful_toast/delight_toast.dart';
-import 'package:delightful_toast/toast/components/toast_card.dart';
-import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_delivery_app/components/delightful_toast.dart';
 import 'package:food_delivery_app/components/passcode_textformfield.dart';
 import 'package:food_delivery_app/components/textformfield.dart';
+import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
-import 'package:food_delivery_app/screens/otp_verification.dart';
 import 'package:food_delivery_app/utils/extensions.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,6 +33,8 @@ class _RegisterFormState extends State<RegisterForm> {
   final _passwordConfirmController = TextEditingController();
   bool obscurePass = true;
   bool obscurePassConfirm = true;
+  bool isLoading = false;
+  bool isLoadingGoogle = false;
 
   Map<String, dynamic> user = {};
 
@@ -142,49 +142,87 @@ class _RegisterFormState extends State<RegisterForm> {
               const SizedBox(
                 height: 15,
               ),
-              TextButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      final userRegistration = await DioProvider().register(
-                          _usernameController.text,
-                          _emailController.text,
-                          _phoneController.text,
-                          _passwordController.text,
-                          _passwordConfirmController.text);
+              isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.orangeAccent,
+                      ),
+                    )
+                  : isLoadingGoogle
+                      ? const Text('')
+                      : TextButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              final userRegistration = await DioProvider()
+                                  .register(
+                                      _usernameController.text,
+                                      _emailController.text,
+                                      _phoneController.text,
+                                      _passwordController.text,
+                                      _passwordConfirmController.text);
 
-                      print(userRegistration);
+                              print(userRegistration);
 
-                      if (userRegistration != '') {
-                        user = json.decode(userRegistration);
-                        print(user);
+                              if (userRegistration['data'] != null) {
+                                user = json.decode(userRegistration['data']);
+                                print(user);
 
-                        MyApp.navigatorKey.currentState!
-                            .pushNamed('reg_otp_verification', arguments: user['email']);
-                      }
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                    overlayColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 179, 174, 174)),
-                  ),
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  )),
+                                MyApp.navigatorKey.currentState!.pushNamed(
+                                    'reg_otp_verification',
+                                    arguments: user['email']);
+
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                context.mounted
+                                    ? showToast(
+                                        userRegistration['message'],
+                                        Color.fromARGB(255, 230, 225, 225),
+                                        Colors.black,
+                                        MediaQuery.of(context).size.width *
+                                            0.035,
+                                        ToastGravity.TOP)
+                                    : null;
+                              }
+                            }
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.orangeAccent),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                                Color.fromARGB(255, 179, 174, 174)),
+                          ),
+                          child: const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          )),
               SizedBox(
                 height: 20,
               ),
-              SignInButton(
-                Buttons.google,
-                onPressed: _handleGoogleSignIn,
-                text: 'Sign Up with Google',
-              )
+              isLoadingGoogle
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.orangeAccent,
+                      ),
+                    )
+                  : isLoading
+                      ? const Text('')
+                      : SignInButton(
+                          Buttons.google,
+                          onPressed: _handleGoogleSignIn,
+                          text: 'Sign In with Google',
+                        )
             ],
           ),
         ));
@@ -192,12 +230,11 @@ class _RegisterFormState extends State<RegisterForm> {
 
   void _handleGoogleSignIn() async {
     try {
-      // GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
-      // UserCredential userCredential = await _auth.signInWithProvider(googleAuthProvider);
+      setState(() {
+        isLoadingGoogle = true;
+      });
 
       var auth = Provider.of<AuthModel>(context, listen: false);
-
-      // _user = userCredential.user;
 
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -223,6 +260,7 @@ class _RegisterFormState extends State<RegisterForm> {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           final token = prefs.getString('token') ?? '';
           final userDetail = await DioProvider().getUser(token);
+          print(token);
           print(userDetail);
           if (userDetail != null) {
             setState(() {
@@ -241,9 +279,9 @@ class _RegisterFormState extends State<RegisterForm> {
                     Theme.of(context).canvasColor,
                     Theme.of(context).canvasColor);
               }
-
-              MyApp.navigatorKey.currentState!.pushNamed('main_layout');
+              isLoading = false;
             });
+            MyApp.navigatorKey.currentState!.pushNamed('main_layout');
           }
         }
       }

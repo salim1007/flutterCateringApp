@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/card_item.dart';
 import 'package:food_delivery_app/main.dart';
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                         fontWeight: FontWeight.bold),
                   ),
                   FutureBuilder(
-                      future: Future.delayed(const Duration(seconds: 1), () {
+                      future: Future.delayed(const Duration(seconds: 0), () {
                         return DioProvider().getNotifications(
                             authModel.getAuthUserID,
                             authModel.getAuthUserToken);
@@ -103,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                                   'notification_page',
                                   arguments: snapshot.data);
                             },
-                            child: snapshot.data > 0
+                            child: snapshot.data is int && snapshot.data > 0
                                 ? Lottie.asset('assets/bell.json',
                                     width: 40, height: 40)
                                 : Container(
@@ -164,6 +165,7 @@ class _HomePageState extends State<HomePage> {
                 height: 15,
               ),
               SearchBar(
+                constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.06),
                 onTap: () {
                   MyApp.navigatorKey.currentState!.pushNamed('search_page');
                 },
@@ -187,23 +189,37 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Book a Table',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
                               SizedBox(
                                 height: 5,
                               ),
-                              Container(
-                                height: 150,
-                                width: double.infinity,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                    'assets/pizza3.jpg',
-                                    fit: BoxFit.cover,
-                                  ),
+                              FlutterCarousel.builder(
+                                itemCount: userDetails['ads'].length,
+                                itemBuilder: (BuildContext context,
+                                        int itemIndex, int pageViewIndex) =>
+                                    Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.015),
+                                  decoration: BoxDecoration(
+                                      color: Colors.orangeAccent,
+                                      borderRadius: BorderRadius.circular(15),
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                              'http://192.168.1.131:8000/storage/${userDetails['ads'][itemIndex]['ad_path']}'),
+                                          fit: BoxFit.cover)),
+                                ),
+                                options: CarouselOptions(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.2,
+                                  autoPlay: true,
+                                  pauseAutoPlayOnTouch: true,
+                                  autoPlayInterval: Duration(seconds: 5),
+                                  autoPlayAnimationDuration:
+                                      Duration(seconds: 2),
+                                  showIndicator: true,
+                                  slideIndicator: CircularWaveSlideIndicator(),
+                                  enableInfiniteScroll: true,
                                 ),
                               )
                             ],

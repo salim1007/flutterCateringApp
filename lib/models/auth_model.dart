@@ -24,8 +24,9 @@ class AuthModel extends ChangeNotifier {
 
   List<dynamic> authCart = [];
   double totalCartPrice = 0;
-  // List<dynamic> authOrders = [];
+
   List<dynamic> authBookings = [];
+
   List<dynamic> systemProducts = [];
 
   List<dynamic> get getSystemProducts {
@@ -39,6 +40,7 @@ class AuthModel extends ChangeNotifier {
   int get getAuthUserID {
     return userId;
   }
+
 
   List<dynamic> get getAuthBookings {
     return authBookings;
@@ -59,11 +61,6 @@ class AuthModel extends ChangeNotifier {
   int get getNotificationCount {
     return notificationLength.length;
   }
-
-
-  // List<dynamic> get getUserOrders {
-  //   return authOrders;
-  // }
 
   bool get isLogin {
     return _isLogin;
@@ -143,11 +140,6 @@ class AuthModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void updateOrder(List<dynamic> newOrder) {
-  //   authOrders = newOrder;
-  //   notifyListeners();
-  // }
-
   void updateBookings(List<dynamic> newBookings) {
     authBookings = newBookings;
     notifyListeners();
@@ -159,6 +151,11 @@ class AuthModel extends ChangeNotifier {
   }
   void updateNotificationCount(int newCount){
     notificationLength.length = newCount;
+    notifyListeners();
+  }
+
+  void updateProductRatings(List<dynamic> fetchedProducts){
+    systemProducts = fetchedProducts;
     notifyListeners();
   }
 
@@ -180,8 +177,6 @@ class AuthModel extends ChangeNotifier {
     var bookings = await DioProvider().fetchBooks(user['id'], token);
     var authUserBookings = json.decode(bookings);
     print('authUserBookings: $authUserBookings'); // Debug line
-    
-    
 
     var cart = await DioProvider().getUserCart(user['id']);
     var authUserCart = json.decode(cart);

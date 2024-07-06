@@ -29,11 +29,16 @@ class _FavouritesPageState extends State<FavouritesPage> {
           children: [
             Container(
               padding: EdgeInsets.all(20),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.arrow_back_ios_rounded),
-                  Text(
+                  GestureDetector(
+                    onTap: () {
+                      MyApp.navigatorKey.currentState!.pop();
+                    },
+                    child: Icon(Icons.arrow_back_ios_rounded),
+                  ),
+                  const Text(
                     'Your Favourites',
                     style: TextStyle(
                         fontSize: 14,

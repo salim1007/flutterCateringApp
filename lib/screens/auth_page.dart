@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/components/login_form.dart';
 import 'package:food_delivery_app/components/register_form.dart';
 import 'package:food_delivery_app/screens/forgot_password.dart';
 import 'package:food_delivery_app/utils/text.dart';
 import 'package:lottie/lottie.dart';
-
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -34,6 +32,7 @@ class _AuthPageState extends State<AuthPage> {
                 height: 80,
                 child: ClipRRect(
                   child: CircleAvatar(
+                    backgroundColor: Colors.black,
                     child: Lottie.asset(
                       'assets/bugger.json',
                     ),
@@ -65,8 +64,7 @@ class _AuthPageState extends State<AuthPage> {
               const SizedBox(
                 height: 20,
               ),
-            isSignIn ? LoginForm() : const RegisterForm(),
-            
+              isSignIn ? const LoginForm() : const RegisterForm(),
               const SizedBox(
                 height: 20,
               ),
@@ -107,7 +105,8 @@ class _AuthPageState extends State<AuthPage> {
                     child: Text(
                       isSignIn ? 'Sign Up' : 'Sign In',
                       style: TextStyle(
-                          color: Colors.blueAccent, fontWeight: FontWeight.bold),
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -118,6 +117,4 @@ class _AuthPageState extends State<AuthPage> {
       ),
     );
   }
-
- 
 }

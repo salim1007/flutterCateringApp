@@ -19,6 +19,8 @@ class _SearchPageState extends State<SearchPage> {
   List<dynamic> filteredProducts = [];
   List<dynamic> favlist = [];
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -27,10 +29,12 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> _getAllProducts() async {
     var authModel = Provider.of<AuthModel>(context, listen: false);
-    var products = await DioProvider().getAllProducts(authModel.getAuthUserToken);
+    var products =
+        await DioProvider().getAllProducts(authModel.getAuthUserToken);
     setState(() {
       productData = json.decode(products);
       filteredProducts = List.from(productData);
+      isLoading = false;
     });
   }
 
@@ -58,11 +62,14 @@ class _SearchPageState extends State<SearchPage> {
     return SafeArea(
         child: Scaffold(
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             decoration: BoxDecoration(boxShadow: List.empty()),
             padding: const EdgeInsets.all(20),
             child: SearchBar(
+              constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height * 0.06),
               textStyle: MaterialStateProperty.all<TextStyle>(
                   const TextStyle(color: Colors.black)),
               onChanged: (value) => _filterProducts(value),
@@ -71,36 +78,53 @@ class _SearchPageState extends State<SearchPage> {
                   MaterialStateProperty.all<Color>(Colors.orangeAccent),
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: MediaQuery.of(context).size.width /
-                        (MediaQuery.of(context).size.height / 1.3),
+          isLoading ? Center(child: CircularProgressIndicator(color: Colors.orangeAccent,),) :
+          filteredProducts.isEmpty
+              ? Center(
+                  child: Text(
+                    'No product matches your search',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.03, fontStyle: FontStyle.italic),
                   ),
-                  itemCount: filteredProducts.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    // Assuming each item in filteredProducts is of type Map<String, dynamic>
-                    Map<String, dynamic> product = filteredProducts[index];
-                    return CardItem(product: product, isFav: favlist.contains(productData[index]['id']));
-                  },
+                )
+              : Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: MediaQuery.of(context).size.width /
+                              (MediaQuery.of(context).size.height / 1.3),
+                        ),
+                        itemCount: filteredProducts.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          // Assuming each item in filteredProducts is of type Map<String, dynamic>
+                          Map<String, dynamic> product =
+                              filteredProducts[index];
+                          return CardItem(
+                              product: product,
+                              isFav:
+                                  favlist.contains(productData[index]['id']));
+                        },
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            MyApp.navigatorKey.currentState!.pop();
-          },
-           backgroundColor:Color.fromARGB(255, 221, 212, 212) ,
-          child: const Icon(FontAwesomeIcons.house, color: Colors.black,),),
+        onPressed: () {
+          MyApp.navigatorKey.currentState!.pop();
+        },
+        backgroundColor: Color.fromARGB(255, 221, 212, 212),
+        child: const Icon(
+          FontAwesomeIcons.house,
+          color: Colors.black,
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     ));
   }

@@ -1,8 +1,7 @@
 import 'dart:convert';
-import 'package:delightful_toast/delight_toast.dart';
-import 'package:delightful_toast/toast/components/toast_card.dart';
-import 'package:delightful_toast/toast/utils/enums.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/delightful_toast.dart';
@@ -22,6 +21,7 @@ class CartsPage extends StatefulWidget {
 }
 
 class _CartsPageState extends State<CartsPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _addressController = TextEditingController();
   int qty = 1;
 
@@ -36,6 +36,12 @@ class _CartsPageState extends State<CartsPage> {
   }
 
   @override
+  void dispose() {
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map?;
     bool showLeadingBtn =
@@ -47,6 +53,8 @@ class _CartsPageState extends State<CartsPage> {
     var authCart = Provider.of<AuthModel>(context, listen: false).getAuthCart;
     var totalCartPrice =
         Provider.of<AuthModel>(context, listen: false).getTotalCartPrice;
+    var phoneNumber =
+        Provider.of<AuthModel>(context, listen: false).getUser['phone'];
 
     print(totalCartPrice);
 
@@ -60,6 +68,13 @@ class _CartsPageState extends State<CartsPage> {
         backgroundColor: Colors.orangeAccent,
         shadowColor: Colors.black,
         automaticallyImplyLeading: showLeading,
+        leading: showLeading
+            ? IconButton(
+                onPressed: () {
+                  MyApp.navigatorKey.currentState!.pop();
+                },
+                icon: Icon(Icons.arrow_back_ios_rounded))
+            : null,
       ),
       body: Container(
         padding: EdgeInsets.only(
@@ -436,34 +451,81 @@ class _CartsPageState extends State<CartsPage> {
                                               'Delivery Location',
                                               style: TextStyle(fontSize: 16),
                                             ),
-                                            TextFormField(
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                              controller: _addressController,
-                                              keyboardType:
-                                                  TextInputType.streetAddress,
-                                              cursorColor: Colors.orangeAccent,
-                                              textAlign: TextAlign.center,
+                                            Form(
+                                              key: _formKey,
+                                              child: TextFormField(
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                controller: _addressController,
+                                                keyboardType:
+                                                    TextInputType.streetAddress,
+                                                cursorColor:
+                                                    Colors.orangeAccent,
+                                                textAlign: TextAlign.center,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  errorStyle: TextStyle(
+                                                    fontStyle: FontStyle.italic,
+                                                    color: Colors
+                                                        .red, // Change to your preferred error color
+                                                    fontSize: 12.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    height:
+                                                        1.0, // Adjust to fine-tune the spacing
+                                                    // This centers the error text
+                                                  ),
+                                                ),
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Please enter Delivery address';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
                                             ),
                                             const SizedBox(
                                               height: 20,
                                             ),
                                             TextButton(
                                                 onPressed: () async {
-                                                  var authModel =
-                                                      Provider.of<AuthModel>(
-                                                          context,
-                                                          listen: false);
+                                                  if (_formKey.currentState!
+                                                      .validate()) {
+                                                        print(phoneNumber);
+                                                    if (phoneNumber == '') {
+                                                      context.mounted
+                                                          ? showToast(
+                                                              'Please provide your Phone Number before placing Order for delivery purpose, update your profile',
+                                                              const Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  202,
+                                                                  187,
+                                                                  187),
+                                                              Colors.black,
+                                                              MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.035,
+                                                              ToastGravity.TOP)
+                                                          : null;
+                                                    } else {
+                                                      var authModel = Provider
+                                                          .of<AuthModel>(
+                                                              context,
+                                                              listen: false);
 
-                                                  var user = await DioProvider()
-                                                      .getUser(authModel
-                                                          .getAuthUserToken);
-                                                  final userData =
-                                                      json.decode(user);
+                                                      var user = await DioProvider()
+                                                          .getUser(authModel
+                                                              .getAuthUserToken);
+                                                      final userData =
+                                                          json.decode(user);
 
-                                                  final response =
-                                                      await DioProvider()
-                                                          .placeOrder(
+                                                      final response =
+                                                          await DioProvider().placeOrder(
                                                               userData['id'],
                                                               authCart,
                                                               totalCartPrice,
@@ -472,55 +534,63 @@ class _CartsPageState extends State<CartsPage> {
                                                               authModel
                                                                   .getAuthUserToken);
 
-                                                  print(response);
-                                                  if (response) {
-                                                    var isDeleted =
-                                                        await DioProvider()
-                                                            .deleteUserCart(
-                                                                userData['id'],
-                                                                authModel
-                                                                    .getAuthUserToken);
-                                                    if (isDeleted == true) {
-                                                      var newCartData =
-                                                          await DioProvider()
-                                                              .getUserCart(
-                                                                  userData[
-                                                                      'id']);
+                                                      print(response);
+                                                      if (response) {
+                                                        var isDeleted =
+                                                            await DioProvider()
+                                                                .deleteUserCart(
+                                                                    userData[
+                                                                        'id'],
+                                                                    authModel
+                                                                        .getAuthUserToken);
+                                                        if (isDeleted == true) {
+                                                          var newCartData =
+                                                              await DioProvider()
+                                                                  .getUserCart(
+                                                                      userData[
+                                                                          'id']);
 
-                                                      setState(() {
-                                                        authModel.updateCart(
-                                                            json.decode(
-                                                                newCartData));
+                                                          setState(() {
+                                                            authModel.updateCart(
+                                                                json.decode(
+                                                                    newCartData));
+
+                                                            if (context
+                                                                .mounted) {
+                                                              showDelighfulToast(
+                                                                  context,
+                                                                  "Order placed successfully!",
+                                                                  Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .headlineMedium
+                                                                      ?.color,
+                                                                  Icons
+                                                                      .delivery_dining,
+                                                                  Theme.of(
+                                                                          context)
+                                                                      .canvasColor,
+                                                                  Theme.of(
+                                                                          context)
+                                                                      .canvasColor);
+                                                            }
+                                                          });
+
+                                                          print(
+                                                              'data deleted!');
+                                                        }
 
                                                         if (context.mounted) {
-                                                          showDelighfulToast(
-                                                              context,
-                                                              "Order placed successfully!",
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .headlineMedium
-                                                                  ?.color,
-                                                              Icons
-                                                                  .delivery_dining,
-                                                              Theme.of(context)
-                                                                  .canvasColor,
-                                                              Theme.of(context)
-                                                                  .canvasColor);
+                                                          Navigator.of(context)
+                                                              .pop();
                                                         }
-                                                      });
 
-                                                      print('data deleted!');
+                                                        MyApp.navigatorKey
+                                                            .currentState!
+                                                            .pushNamed(
+                                                                'orders_page');
+                                                      }
                                                     }
-
-                                                    if (context.mounted) {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    }
-
-                                                    MyApp.navigatorKey
-                                                        .currentState!
-                                                        .pushNamed(
-                                                            'orders_page');
                                                   }
                                                 },
                                                 child: Container(

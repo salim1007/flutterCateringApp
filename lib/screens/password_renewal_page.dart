@@ -20,6 +20,14 @@ class _PasswordRenewalPageState extends State<PasswordRenewalPage> {
   final _passwordConfirmController = TextEditingController();
   bool obscure = true;
   bool obscureConfirm = true;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _passwordConfirmController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final userEmail = ModalRoute.of(context)!.settings.arguments as String;
@@ -101,7 +109,7 @@ class _PasswordRenewalPageState extends State<PasswordRenewalPage> {
 
                             if (context.mounted) {
                               showToast(
-                                  'Password renewed successfully, try logging in!',
+                                  'Update success, try logging in!',
                                   Theme.of(context).canvasColor,
                                   Theme.of(context)
                                       .textTheme

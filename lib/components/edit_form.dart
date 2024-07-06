@@ -1,8 +1,4 @@
 import 'dart:convert';
-
-import 'package:delightful_toast/delight_toast.dart';
-import 'package:delightful_toast/toast/components/toast_card.dart';
-import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/components/delightful_toast.dart';
 import 'package:food_delivery_app/components/textformfield.dart';
@@ -47,6 +43,15 @@ class _EditFormState extends State<EditForm> {
   }
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _usernameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(MediaQuery.of(context).size.width > 550
@@ -56,7 +61,7 @@ class _EditFormState extends State<EditForm> {
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
               Text(
@@ -142,7 +147,9 @@ class _EditFormState extends State<EditForm> {
                         if (response != '') {
                           var newUserData = await DioProvider()
                               .getUser(auth.getAuthUserToken);
-                          auth.updateUser(json.decode(newUserData));
+                          setState(() {
+                            auth.updateUser(json.decode(newUserData));
+                          });
 
                           if (context.mounted) {
                             showDelighfulToast(

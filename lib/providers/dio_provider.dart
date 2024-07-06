@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioProvider {
-  Future<dynamic> register(String username, String email, String phone,
-      String password, String passwordConfirm) async {
+  Future<Map<String, dynamic>> register(String username, String email,
+      String phone, String password, String passwordConfirm) async {
     try {
       var user =
           await Dio().post('http://192.168.1.131:8000/api/register', data: {
@@ -15,12 +15,20 @@ class DioProvider {
         'password_confirmation': passwordConfirm
       });
       if (user.statusCode == 201 && user.data != '') {
-        return json.encode(user.data);
+        // return json.encode(user.data);
+        return {
+          'data': json.encode(user.data),
+          'message': 'Successfully registered'
+        };
       } else {
-        return false;
+        // return false;
+        return {'data': null, 'message': 'User with this email exists'};
       }
     } catch (error) {
-      return error.toString;
+      return {
+        'status': 'error',
+        'message': error.toString(),
+      };
     }
   }
 
@@ -33,6 +41,7 @@ class DioProvider {
       if (user.data != null) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', user.data);
+        await prefs.setBool('isLoggedIn', true);
         return true;
       } else {
         return false;
@@ -49,6 +58,7 @@ class DioProvider {
       if (response.statusCode == 200) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', response.data['user_token']);
+        await prefs.setBool('isLoggedIn', true);
         return {
           'status': true,
         };
@@ -60,23 +70,28 @@ class DioProvider {
     }
   }
 
-  Future<dynamic> verifyEmail(String email) async {
+  Future<Map<String, dynamic>> verifyEmail(String email) async {
     try {
-      var response = await Dio().post(
-          'http://192.168.1.131:8000/api/verifyEmail',
-          data: {'email': email});
-      if (response.statusCode == 200) {
+      final response = await Dio().post(
+        'http://192.168.1.131:8000/api/verifyEmail',
+        data: {'email': email},
+      );
+
+      if (response.data['status'] == 200) {
         return {
           'status': 'email_found',
           'otp': response.data['new_otp'],
         };
-      } else if (response.data == false) {
+      } else {
         return {
           'status': 'email_not_found',
         };
       }
     } catch (error) {
-      return error.toString();
+      return {
+        'status': 'error',
+        'message': error.toString(),
+      };
     }
   }
 
@@ -95,20 +110,48 @@ class DioProvider {
     }
   }
 
-  Future<dynamic> getToken(String email, String password) async {
+  Future<Map<String, dynamic>> getToken(String email, String password) async {
     try {
       var response = await Dio().post('http://192.168.1.131:8000/api/login',
           data: {'email': email, 'password': password});
-      if (response.statusCode == 200 && response.data != '') {
+      if (response.data['status'] == 200) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', response.data);
-        return true;
+        await prefs.setString('token', response.data['token']);
+        await prefs.setBool('isLoggedIn', true);
+        print(response.data['status']);
+
+        return {
+          'status': response.data['status'],
+          'data': response.data['token']
+        };
+      } else if (response.data['status'] == 401) {
+        return {
+          'status': response.data['status'],
+          'data': response.data['data_mismatch']
+        };
       } else {
-        return 'error';
+        return {'status': '', 'data': null};
       }
     } catch (error) {
-      print(error.toString());
-      return 'Error';
+      return {
+        'status': 'error',
+        'message': error.toString(),
+      };
+    }
+  }
+
+  Future<dynamic> removeUser(String email) async {
+    try {
+      var response = await Dio().delete(
+          'http://192.168.1.131:8000/api/removeUser',
+          queryParameters: {'email': email});
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error.toString();
     }
   }
 
@@ -463,13 +506,9 @@ class DioProvider {
           data: {'new_password': newPassword},
           queryParameters: {'email': email});
       if (response.statusCode == 200) {
-        return {
-          'status': 'update_success'
-        };
-      }else{
-        return {
-          'status': 'update_fail'
-        };
+        return {'status': 'update_success'};
+      } else {
+        return {'status': 'update_fail'};
       }
     } catch (error) {
       return error.toString();

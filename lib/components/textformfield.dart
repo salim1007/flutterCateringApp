@@ -27,19 +27,20 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
         keyboardType:widget.textInputType,
         cursorColor: Colors.orangeAccent,
         decoration: InputDecoration(
+          hintStyle: TextStyle(color: Theme.of(context).hintColor),
           hintText: widget.hintText,
           labelText: widget.labelText,
-          labelStyle: TextStyle(color: Theme.of(context).highlightColor),
+          labelStyle: TextStyle(color: Theme.of(context).hintColor),
           alignLabelWithHint: true,
           prefixIcon: Icon(widget.icon),
-          prefixIconColor: Colors.orangeAccent,
+          prefixIconColor: Theme.of(context).hintColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: const BorderSide(
-              color: Colors.orangeAccent,
+              color: Color.fromARGB(255, 222, 146, 46),
               width: 2.0,
             ),
             

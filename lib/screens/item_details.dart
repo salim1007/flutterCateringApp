@@ -32,13 +32,15 @@ class _ItemDetailsState extends State<ItemDetails> {
 
   bool showLeadingButton = true;
 
-  Future<void> submitRating(
-      double rating, int userID, int productID, String token) async {
-    var response =
-        await DioProvider().rateProduct(rating, userID, productID, token);
+  // Future<void> submitRating(
+  //     double rating, int userID, int productID, String token) async {
+  //   var response =
+  //       await DioProvider().rateProduct(rating, userID, productID, token);
 
-    if (response == true) {}
-  }
+  //   if (response == true) {
+  //     showToast('Rated', backGroundColor, textColor, fontSize, gravity)
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,15 @@ class _ItemDetailsState extends State<ItemDetails> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: GestureDetector(
+          onTap: () {
+            MyApp.navigatorKey.currentState!.pop();
+          },
+          child: Icon(
+            Icons.arrow_back_ios_rounded,
+            size: MediaQuery.of(context).size.width * 0.06,
+          ),
+        ),
         actions: [
           Consumer<AuthModel>(builder: (context, auth, child) {
             bool isFav = auth.getFav.contains(product['id']);
@@ -336,12 +347,30 @@ class _ItemDetailsState extends State<ItemDetails> {
                                           MediaQuery.of(context).size.height *
                                               0.016,
                                       fontWeight: FontWeight.bold),
-                                  onSubmitted: (ratingResponse) {
-                                    submitRating(
-                                        ratingResponse.rating,
-                                        auth.getAuthUserID,
-                                        product['id'],
-                                        auth.getAuthUserToken);
+                                  onSubmitted: (ratingResponse) async {
+                                    var response = await DioProvider()
+                                        .rateProduct(
+                                            ratingResponse.rating,
+                                            auth.getAuthUserID,
+                                            product['id'],
+                                            auth.getAuthUserToken);
+
+                                    if (response) {
+                                      context.mounted
+                                          ? showToast(
+                                              'Rated ${product['product_name']}',
+                                              Theme.of(context).canvasColor,
+                                              Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium
+                                                  ?.color,
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.035,
+                                              ToastGravity.BOTTOM)
+                                          : null;
+                                    }
                                   });
                             });
                       },
@@ -516,13 +545,14 @@ class _ItemDetailsState extends State<ItemDetails> {
                               if (response) {
                                 var newCart = await DioProvider()
                                     .getUserCart(userData['id']);
-                                var authModel = Provider.of<AuthModel>(context,
-                                    listen: false);
-                                authModel.updateCart(json.decode(newCart));
                                 if (context.mounted) {
+                                  var authModel = Provider.of<AuthModel>(
+                                      context,
+                                      listen: false);
+                                  authModel.updateCart(json.decode(newCart));
                                   showDelighfulToast(
                                       context,
-                                      "Product added to cart!",
+                                      "${product['product_name']} added to cart!",
                                       Theme.of(context)
                                           .textTheme
                                           .headlineMedium
@@ -536,15 +566,16 @@ class _ItemDetailsState extends State<ItemDetails> {
                                   'showLeadingButton': showLeadingButton
                                 });
                               } else {
-                                if (context.mounted) {
-                                  showDelighfulToast(
-                                      context,
-                                      "Product already added to cart!",
-                                      Color.fromARGB(255, 220, 201, 164),
-                                      Icons.remove_shopping_cart,
-                                      Colors.black,
-                                      Colors.black);
-                                }
+                                context.mounted
+                                    ? showDelighfulToast(
+                                        context,
+                                        "${product['product_name']} already added to cart!",
+                                        const Color.fromARGB(
+                                            255, 220, 201, 164),
+                                        Icons.remove_shopping_cart,
+                                        Colors.black,
+                                        Colors.black)
+                                    : null;
                               }
                             }
                           },

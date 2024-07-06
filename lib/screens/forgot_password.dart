@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_delivery_app/components/textformfield.dart';
 import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
-import 'package:food_delivery_app/screens/verify_email.dart';
 import 'package:food_delivery_app/utils/extensions.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -19,12 +17,20 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -56,9 +62,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
+                Text(
                   'Please enter your Email Address to receive a Verification Code',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.035,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
@@ -83,46 +91,63 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 const SizedBox(
                   height: 30,
                 ),
-                TextButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final response = await DioProvider()
-                            .verifyEmail(_emailController.text);
-                        if (response['status'] == 'email_found') {
-                          MyApp.navigatorKey.currentState!
-                              .pushNamed('verify_email', arguments: {
-                            'user_email': _emailController.text,
-                            'user_otp': response['otp']
-                          });
-                        } else if (response['status'] == 'email_not_found') {
-                          if (context.mounted) {
-                            showToast(
-                                'No account found with this email!',
-                                Theme.of(context).canvasColor,
-                                Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.color,
-                                MediaQuery.of(context).size.width * 0.035,
-                                ToastGravity.BOTTOM);
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.orangeAccent,
+                        ),
+                      )
+                    : TextButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            final response = await DioProvider()
+                                .verifyEmail(_emailController.text);
+                            if (response['status'] == 'email_found') {
+                              MyApp.navigatorKey.currentState!
+                                  .pushNamed('verify_email', arguments: {
+                                'user_email': _emailController.text,
+                                'user_otp': response['otp']
+                              });
+                              setState(() {
+                                _emailController.text = '';
+                                isLoading = false;
+                              });
+                            } else if (response['status'] ==
+                                'email_not_found') {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              if (context.mounted) {
+                                showToast(
+                                    'No account found with this email!',
+                                    Theme.of(context).canvasColor,
+                                    Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.color,
+                                    MediaQuery.of(context).size.width * 0.035,
+                                    ToastGravity.BOTTOM);
+                              }
+                            }
                           }
-                        }
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                      overlayColor: MaterialStateProperty.all<Color>(
-                          const Color.fromARGB(255, 179, 174, 174)),
-                    ),
-                    child: const Text(
-                      'Send',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    )),
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.orangeAccent),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                              const Color.fromARGB(255, 179, 174, 174)),
+                        ),
+                        child: Text(
+                          'Send',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.035,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        )),
               ],
             ),
           ),

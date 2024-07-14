@@ -30,7 +30,7 @@ class _NotificationLayoutState extends State<NotificationLayout> {
       },
       child: Scaffold(
         appBar: AppBar(
-            title: const Text('Ydde Fast Foods', style: TextStyle(fontSize: 20)),
+            title: const Text('Ydde Fast Foods', style: TextStyle(fontSize: 20,fontFamily: 'VarelaRound',)),
             centerTitle: true,
             backgroundColor: Colors.orangeAccent,
             leading: GestureDetector(
@@ -60,6 +60,7 @@ class _NotificationLayoutState extends State<NotificationLayout> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 12,
+                        fontFamily: 'VarelaRound',
                         color: Colors.grey,
                       ),
                     ),

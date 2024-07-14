@@ -33,7 +33,7 @@ class FavCard extends StatelessWidget {
                     color: Colors.amber,
                     image: DecorationImage(
                         image: NetworkImage(
-                            'http://192.168.1.131:8000/storage/${productData['photo_path']}'),
+                            'http://102.37.33.97/storage/${productData['photo_path']}'),
                         fit: BoxFit.cover)),
               ),
               Container(
@@ -48,20 +48,31 @@ class FavCard extends StatelessWidget {
                         productData['product_name'],
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.025,
+                          fontFamily: 'VarelaRound',
                         ),
                       ),
-                      Text(
-                        '${productData['price']}/=',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.025,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cost:',
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.025,
+                                fontFamily: 'VarelaRound',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            '${productData['price']}/=',
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.025,
+                                fontFamily: 'VarelaRound',
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
-                      Text(
-                        '4.2',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.025,
-                        ),
-                      )
                     ]),
               ),
             ],

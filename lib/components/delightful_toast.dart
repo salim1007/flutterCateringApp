@@ -17,6 +17,7 @@ void showDelighfulToast(BuildContext context, String message, Color? cardColor, 
                   message,
                   style: TextStyle(
                       fontSize: 14,
+                      fontFamily: 'VarelaRound',
                       fontWeight: FontWeight.bold,
                       color: textColor),
                 ),

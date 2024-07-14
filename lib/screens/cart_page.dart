@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/delightful_toast.dart';
@@ -50,19 +49,21 @@ class _CartsPageState extends State<CartsPage> {
       showLeading = showLeadingBtn;
     });
 
-    var authCart = Provider.of<AuthModel>(context, listen: false).getAuthCart;
+    var authCart = Provider.of<AuthModel>(context, listen: true).getAuthCart;
     var totalCartPrice =
-        Provider.of<AuthModel>(context, listen: false).getTotalCartPrice;
+        Provider.of<AuthModel>(context, listen: true).getTotalCartPrice;
     var phoneNumber =
-        Provider.of<AuthModel>(context, listen: false).getUser['phone'];
-
-    print(totalCartPrice);
+        Provider.of<AuthModel>(context, listen: true).getUser['phone'];
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Your Carts',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'VarelaRound',
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.orangeAccent,
@@ -92,7 +93,10 @@ class _CartsPageState extends State<CartsPage> {
                     children: [
                       const Text(
                         'You cart is empty!',
-                        style: TextStyle(fontSize: 13),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontFamily: 'VarelaRound',
+                        ),
                       ),
                       Lottie.asset('assets/cart_empty.json',
                           width: MediaQuery.of(context).size.width * 0.25,
@@ -135,7 +139,7 @@ class _CartsPageState extends State<CartsPage> {
                                           color: Colors.amber,
                                           image: DecorationImage(
                                               image: NetworkImage(
-                                                  'http://192.168.1.131:8000/storage/${cartItem['prod_image']}'),
+                                                  'http://102.37.33.97/storage/${cartItem['prod_image']}'),
                                               fit: BoxFit.cover)),
                                     ),
                                     Container(
@@ -157,35 +161,53 @@ class _CartsPageState extends State<CartsPage> {
                                                         .size
                                                         .width *
                                                     0.025,
+                                                fontFamily: 'VarelaRound',
                                               ),
                                             ),
-                                            Text(
-                                              'Rated: 2.4',
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.025,
+                                            if (cartItem['prod_size'] !=
+                                                null) ...[
+                                              Text(
+                                                'Size: ${cartItem['prod_size']} inches',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.025,
+                                                ),
                                               ),
+                                            ],
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Cost:',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.025,
+                                                    fontFamily: 'VarelaRound',
+                                                    fontStyle: FontStyle.italic,
+                                                     fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${cartItem['total_price']}/=',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.025,
+                                                    fontFamily: 'VarelaRound',
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              'Cost: ${cartItem['total_price']}/=',
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.025,
-                                              ),
-                                            ),
-                                            Text(
-                                              '${cartItem['prod_size'] != null ? 'Size: ${cartItem['prod_size']} inches' : ''}',
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.025,
-                                              ),
-                                            )
                                           ]),
                                     ),
                                   ],
@@ -223,8 +245,6 @@ class _CartsPageState extends State<CartsPage> {
                                                             cartItem['prod_id'],
                                                             token);
                                                 if (response) {
-                                                  print(
-                                                      'increased qty successfully!');
                                                   setState(() {
                                                     var divider = cartItem[
                                                             'total_price'] /
@@ -262,10 +282,12 @@ class _CartsPageState extends State<CartsPage> {
                                         child: Text(
                                           '${cartItem['prod_qty']}',
                                           style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.025),
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.025,
+                                            fontFamily: 'VarelaRound',
+                                          ),
                                         ),
                                       ),
                                       Container(
@@ -296,8 +318,6 @@ class _CartsPageState extends State<CartsPage> {
                                                             cartItem['prod_id'],
                                                             token);
                                                 if (response) {
-                                                  print(
-                                                      'decreased qty successfully!');
                                                   setState(() {
                                                     var divider = cartItem[
                                                             'total_price'] /
@@ -403,7 +423,10 @@ class _CartsPageState extends State<CartsPage> {
                       child: Text(
                         'Total Cost: $totalCartPrice/=',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          fontFamily: 'VarelaRound',
+                        ),
                       ),
                     ),
                     Container(
@@ -419,11 +442,14 @@ class _CartsPageState extends State<CartsPage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
+                                      backgroundColor:
+                                          Theme.of(context).canvasColor,
                                       titlePadding: EdgeInsets.all(25),
                                       title: const Text(
                                         'You are about to place an Order!',
                                         style: TextStyle(
                                             fontSize: 18,
+                                            fontFamily: 'VarelaRound',
                                             fontWeight: FontWeight.bold,
                                             color: Color.fromARGB(
                                                 255, 219, 135, 10)),
@@ -436,12 +462,14 @@ class _CartsPageState extends State<CartsPage> {
                                               'Total Amount:',
                                               style: TextStyle(
                                                 fontSize: 16,
+                                                fontFamily: 'VarelaRound',
                                               ),
                                             ),
                                             Text(
                                               '${totalCartPrice}/=',
                                               style: const TextStyle(
                                                   fontSize: 20,
+                                                  fontFamily: 'VarelaRound',
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             const SizedBox(
@@ -449,7 +477,10 @@ class _CartsPageState extends State<CartsPage> {
                                             ),
                                             const Text(
                                               'Delivery Location',
-                                              style: TextStyle(fontSize: 16),
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'VarelaRound',
+                                              ),
                                             ),
                                             Form(
                                               key: _formKey,
@@ -463,13 +494,13 @@ class _CartsPageState extends State<CartsPage> {
                                                 cursorColor:
                                                     Colors.orangeAccent,
                                                 textAlign: TextAlign.center,
-                                                decoration:
-                                                    const InputDecoration(
+                                                decoration: InputDecoration(
                                                   errorStyle: TextStyle(
                                                     fontStyle: FontStyle.italic,
-                                                    color: Colors
-                                                        .red, // Change to your preferred error color
+                                                    color: Colors.red[
+                                                        300], // Change to your preferred error color
                                                     fontSize: 12.0,
+                                                    fontFamily: 'VarelaRound',
                                                     fontWeight:
                                                         FontWeight.normal,
                                                     height:
@@ -493,8 +524,8 @@ class _CartsPageState extends State<CartsPage> {
                                                 onPressed: () async {
                                                   if (_formKey.currentState!
                                                       .validate()) {
-                                                        print(phoneNumber);
-                                                    if (phoneNumber == '') {
+                                                    if (phoneNumber == null ||
+                                                        phoneNumber == '') {
                                                       context.mounted
                                                           ? showToast(
                                                               'Please provide your Phone Number before placing Order for delivery purpose, update your profile',
@@ -534,7 +565,6 @@ class _CartsPageState extends State<CartsPage> {
                                                               authModel
                                                                   .getAuthUserToken);
 
-                                                      print(response);
                                                       if (response) {
                                                         var isDeleted =
                                                             await DioProvider()
@@ -575,9 +605,6 @@ class _CartsPageState extends State<CartsPage> {
                                                                       .canvasColor);
                                                             }
                                                           });
-
-                                                          print(
-                                                              'data deleted!');
                                                         }
 
                                                         if (context.mounted) {
@@ -616,7 +643,11 @@ class _CartsPageState extends State<CartsPage> {
                           },
                           child: Text(
                             'Continue To Checkout',
-                            style: TextStyle(fontSize: 15, color: Colors.black),
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontFamily: 'VarelaRound',
+                            ),
                           ),
                         ))
                   ],

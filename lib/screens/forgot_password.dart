@@ -5,6 +5,7 @@ import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:food_delivery_app/utils/extensions.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -39,7 +40,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         title: const Text(
           'Forgot Password',
           style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white,fontFamily: 'VarelaRound',),
         ),
         centerTitle: true,
         backgroundColor: Colors.orangeAccent,
@@ -66,6 +67,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   'Please enter your Email Address to receive a Verification Code',
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.035,
+                      fontFamily: 'VarelaRound',
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -93,8 +95,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 isLoading
                     ? Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.orangeAccent,
+                        child: LoadingAnimationWidget.threeArchedCircle(
+                          color: Colors.white,
+                          size: MediaQuery.of(context).size.width * 0.09,
                         ),
                       )
                     : TextButton(
@@ -145,6 +148,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.035,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'VarelaRound',
                             color: Colors.white,
                           ),
                         )),

@@ -68,6 +68,7 @@ class _EditFormState extends State<EditForm> {
                 'Edit Profile',
                 style: TextStyle(
                     fontSize: 16,
+                    fontFamily: 'VarelaRound',
                     color: Theme.of(context).highlightColor,
                     fontWeight: FontWeight.bold),
               ),
@@ -142,7 +143,7 @@ class _EditFormState extends State<EditForm> {
                             _addressController.text,
                             auth.getAuthUserToken);
 
-                        print(auth.getAuthUserID);
+                     
 
                         if (response != '') {
                           var newUserData = await DioProvider()
@@ -172,6 +173,7 @@ class _EditFormState extends State<EditForm> {
                       'Update',
                       style: TextStyle(
                           fontSize: 14,
+                          fontFamily: 'VarelaRound',
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ));

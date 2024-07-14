@@ -35,7 +35,20 @@ class _PasswordRenewalPageState extends State<PasswordRenewalPage> {
       appBar: AppBar(
         title: Text(
           'Password Update',
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'VarelaRound',
+          ),
+        ),
+        leading: GestureDetector(
+          onTap: () {
+            MyApp.navigatorKey.currentState!.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const AuthPage()),
+              (Route<dynamic> route) => false,
+            );
+          },
+          child: Icon(Icons.arrow_back_ios_rounded),
         ),
         centerTitle: true,
       ),
@@ -50,8 +63,11 @@ class _PasswordRenewalPageState extends State<PasswordRenewalPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text('Enter New Password',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'VarelaRound',
+                    )),
                 Column(
                   children: [
                     PasscodeTextFormFieldWidget(

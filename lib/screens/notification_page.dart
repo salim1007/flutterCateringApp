@@ -17,7 +17,6 @@ class NotificationPage extends StatelessWidget {
       canPop: false,
       onPopInvoked: (didPop) {
         if (!didPop) {
-          print(didPop);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const MainLayout()),
@@ -49,7 +48,10 @@ class NotificationPage extends StatelessWidget {
                 child: Text(
                   'Notifications',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'VarelaRound',
+                  ),
                 ),
               ),
               SizedBox(
@@ -59,7 +61,7 @@ class NotificationPage extends StatelessWidget {
                 margin: EdgeInsets.all(10),
                 padding: EdgeInsets.all(10),
                 child: InkWell(
-                  splashColor: Theme.of(context).scaffoldBackgroundColor,
+                  splashColor: Colors.transparent,
                   onTap: () async {
                     await DioProvider().updateSeenNotifications(
                         authModel.getAuthUserID, authModel.getAuthUserToken);

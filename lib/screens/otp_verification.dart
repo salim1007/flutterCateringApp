@@ -8,6 +8,7 @@ import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
@@ -83,6 +84,7 @@ class _OtpVerificationState extends State<OtpVerification> {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'VarelaRound',
                   color: Colors.white),
             ),
             centerTitle: true,
@@ -114,6 +116,7 @@ class _OtpVerificationState extends State<OtpVerification> {
                     'A One-Time-Password was sent to your Email, enter the OTP',
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.035,
+                        fontFamily: 'VarelaRound',
                         fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -168,9 +171,6 @@ class _OtpVerificationState extends State<OtpVerification> {
                                 if (userDetail != null) {
                                   setState(() {
                                     final userData = json.decode(userDetail);
-
-                                    print(userData);
-
                                     auth.loginSuccess(userData);
 
                                     MyApp.navigatorKey.currentState!
@@ -230,13 +230,16 @@ class _OtpVerificationState extends State<OtpVerification> {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor,
-                                  strokeWidth: 3,
-                                ),
-                              );
+                                  width: 20,
+                                  height: 20,
+                                  child: Center(
+                                    child: LoadingAnimationWidget
+                                        .threeArchedCircle(
+                                      color: Colors.white,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.09,
+                                    ),
+                                  ));
                             } else if (!snapshot.hasData ||
                                 snapshot.data! <= 0) {
                               return TextButton(
@@ -291,23 +294,24 @@ class _OtpVerificationState extends State<OtpVerification> {
       context: context,
       builder: (context) {
         return AlertDialog(
-            backgroundColor: Theme.of(context).canvasColor,
+          backgroundColor: Theme.of(context).canvasColor,
           title: Text(
             textAlign: TextAlign.center,
             'Confirm Exit',
             style: TextStyle(
-               color: Theme.of(context).textTheme.headlineMedium?.color,
+                color: Theme.of(context).textTheme.headlineMedium?.color,
                 fontSize: MediaQuery.of(context).size.width * 0.04,
+                fontFamily: 'VarelaRound',
                 fontWeight: FontWeight.bold),
           ),
           content: Text(
             textAlign: TextAlign.center,
             'Do you really want to exit?, The process will be discarded',
             style: TextStyle(
-              color: Theme.of(context).textTheme.headlineMedium?.color,
-              fontSize: MediaQuery.of(context).size.width * 0.035,
-              fontWeight: FontWeight.bold
-            ),
+                color: Theme.of(context).textTheme.headlineMedium?.color,
+                fontSize: MediaQuery.of(context).size.width * 0.035,
+                fontFamily: 'VarelaRound',
+                fontWeight: FontWeight.bold),
           ),
           actions: [
             Center(
@@ -326,10 +330,11 @@ class _OtpVerificationState extends State<OtpVerification> {
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.of(context).size.width * 0.033,
+                          fontFamily: 'VarelaRound',
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  SizedBox(width: 16), // Add some spacing between the buttons
+                  SizedBox(width: 16),
                   TextButton(
                     style: const ButtonStyle(
                         backgroundColor:
@@ -342,6 +347,7 @@ class _OtpVerificationState extends State<OtpVerification> {
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.of(context).size.width * 0.033,
+                          fontFamily: 'VarelaRound',
                           fontWeight: FontWeight.bold),
                     ),
                   ),

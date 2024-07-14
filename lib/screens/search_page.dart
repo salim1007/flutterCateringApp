@@ -5,6 +5,7 @@ import 'package:food_delivery_app/components/card_item.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
@@ -78,41 +79,52 @@ class _SearchPageState extends State<SearchPage> {
                   MaterialStateProperty.all<Color>(Colors.orangeAccent),
             ),
           ),
-          isLoading ? Center(child: CircularProgressIndicator(color: Colors.orangeAccent,),) :
-          filteredProducts.isEmpty
+          isLoading
               ? Center(
-                  child: Text(
-                    'No product matches your search',
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.03, fontStyle: FontStyle.italic),
+                  child: LoadingAnimationWidget.threeArchedCircle(
+                    color: Colors.white,
+                    size: MediaQuery.of(context).size.width * 0.09,
                   ),
                 )
-              : Expanded(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: MediaQuery.of(context).size.width /
-                              (MediaQuery.of(context).size.height / 1.3),
+              : filteredProducts.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No product matches your search',
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.03,
+                            fontFamily: 'VarelaRound',
+                            fontStyle: FontStyle.italic),
+                      ),
+                    )
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: MediaQuery.of(context)
+                                      .size
+                                      .width /
+                                  (MediaQuery.of(context).size.height / 1.3),
+                            ),
+                            itemCount: filteredProducts.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              // Assuming each item in filteredProducts is of type Map<String, dynamic>
+                              Map<String, dynamic> product =
+                                  filteredProducts[index];
+                              return CardItem(
+                                  product: product,
+                                  isFav: favlist
+                                      .contains(productData[index]['id']));
+                            },
+                          ),
                         ),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          // Assuming each item in filteredProducts is of type Map<String, dynamic>
-                          Map<String, dynamic> product =
-                              filteredProducts[index];
-                          return CardItem(
-                              product: product,
-                              isFav:
-                                  favlist.contains(productData[index]['id']));
-                        },
                       ),
                     ),
-                  ),
-                ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

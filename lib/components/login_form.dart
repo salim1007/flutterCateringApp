@@ -10,6 +10,7 @@ import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:food_delivery_app/utils/extensions.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -80,9 +81,10 @@ class _LoginFormState extends State<LoginForm> {
               ),
               Consumer<AuthModel>(builder: (context, auth, child) {
                 return isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.orangeAccent,
+                    ? Center(
+                        child: LoadingAnimationWidget.threeArchedCircle(
+                          color: Colors.white,
+                          size: MediaQuery.of(context).size.width * 0.09,
                         ),
                       )
                     : TextButton(
@@ -108,10 +110,9 @@ class _LoginFormState extends State<LoginForm> {
                                   setState(() {
                                     final userData = json.decode(userDetail);
 
-                                    print(userData);
 
                                     auth.loginSuccess(userData);
-                                    print(auth.getAuthUserID);
+                                  
                                   });
 
                                   MyApp.navigatorKey.currentState!
@@ -156,6 +157,7 @@ class _LoginFormState extends State<LoginForm> {
                           'Sign In',
                           style: TextStyle(
                             fontSize: 18,
+                            fontFamily: 'VarelaRound',
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/components/edit_form.dart';
+import 'package:food_delivery_app/main.dart';
 
 class EditPage extends StatefulWidget {
   const EditPage({super.key});
@@ -21,9 +23,19 @@ class _EditPageState extends State<EditPage> {
         title: Text('Profile'),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: GestureDetector(
+          onTap: () {
+            MyApp.navigatorKey.currentState!.pop();
+          },
+          child: Icon(Icons.arrow_back_ios_rounded),
+        ),
       ),
       body: Center(
-        child: EditForm(email: emailValue, phone: phoneValue, address: addressValue, username: usernameValue),
+        child: EditForm(
+            email: emailValue,
+            phone: phoneValue,
+            address: addressValue,
+            username: usernameValue),
       ),
     );
   }

@@ -129,7 +129,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                   borderRadius: BorderRadius.circular(200),
                   image: DecorationImage(
                       image: NetworkImage(
-                          'http://192.168.1.131:8000/storage/${product['photo_path']}'),
+                          'http://102.37.33.97/storage/${product['photo_path']}'),
                       fit: BoxFit.cover),
                   color: Colors.amberAccent,
                 ),
@@ -170,6 +170,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                         fontSize:
                                             MediaQuery.of(context).size.height *
                                                 0.015,
+                                                fontFamily: 'VarelaRound',
                                         fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
@@ -184,6 +185,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                       fontSize:
                                           MediaQuery.of(context).size.height *
                                               0.013,
+                                              fontFamily: 'VarelaRound',
                                     ),
                                   )
                                 ],
@@ -216,6 +218,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                         fontSize:
                                             MediaQuery.of(context).size.height *
                                                 0.015,
+                                                fontFamily: 'VarelaRound',
                                         fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
@@ -230,6 +233,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                       fontSize:
                                           MediaQuery.of(context).size.height *
                                               0.013,
+                                              fontFamily: 'VarelaRound',
                                     ),
                                   )
                                 ],
@@ -262,6 +266,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                         fontSize:
                                             MediaQuery.of(context).size.height *
                                                 0.015,
+                                                fontFamily: 'VarelaRound',
                                         fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
@@ -276,6 +281,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                       fontSize:
                                           MediaQuery.of(context).size.height *
                                               0.013,
+                                              fontFamily: 'VarelaRound',
                                     ),
                                   )
                                 ],
@@ -317,6 +323,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                         fontSize:
                                             MediaQuery.of(context).size.height *
                                                 0.016,
+                                                fontFamily: 'VarelaRound',
                                         fontWeight: FontWeight.bold),
                                   ),
                                   message: Text(
@@ -324,7 +331,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                     style: TextStyle(
                                         fontSize:
                                             MediaQuery.of(context).size.height *
-                                                0.014),
+                                                0.014,fontFamily: 'VarelaRound',),
                                     textAlign: TextAlign.center,
                                   ),
                                   image: ClipRect(
@@ -332,7 +339,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.12,
-                                      'http://192.168.1.131:8000/storage/${product['photo_path']}',
+                                      'http://102.37.33.97/storage/${product['photo_path']}',
                                     ),
                                   ),
                                   initialRating: 1.0,
@@ -346,16 +353,16 @@ class _ItemDetailsState extends State<ItemDetails> {
                                       fontSize:
                                           MediaQuery.of(context).size.height *
                                               0.016,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,fontFamily: 'VarelaRound',),
                                   onSubmitted: (ratingResponse) async {
-                                    var response = await DioProvider()
+                                    await DioProvider()
                                         .rateProduct(
                                             ratingResponse.rating,
                                             auth.getAuthUserID,
                                             product['id'],
                                             auth.getAuthUserToken);
 
-                                    if (response) {
+                                    
                                       context.mounted
                                           ? showToast(
                                               'Rated ${product['product_name']}',
@@ -370,7 +377,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                                   0.035,
                                               ToastGravity.BOTTOM)
                                           : null;
-                                    }
+                                    
                                   });
                             });
                       },
@@ -379,6 +386,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
+                            fontFamily: 'VarelaRound',
                             fontSize:
                                 MediaQuery.of(context).size.height * 0.015),
                       ),
@@ -394,6 +402,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                     product['product_name'],
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.height * 0.018,
+                        fontFamily: 'VarelaRound',
                         fontWeight: FontWeight.bold),
                   ),
                   Row(
@@ -435,7 +444,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 .headlineMedium
                                 ?.color,
                             // backgroundColor: Theme.of(context).primaryColor,
-                            fontSize: 22),
+                            fontSize: 22,fontFamily: 'VarelaRound',),
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.02,
@@ -477,6 +486,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: MediaQuery.of(context).size.height * 0.014,
+                      fontFamily: 'VarelaRound',
                     ),
                   ),
                 ),
@@ -500,6 +510,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                       style: TextStyle(
                           fontSize: MediaQuery.of(context).size.height * 0.015,
                           fontWeight: FontWeight.bold,
+                          fontFamily: 'VarelaRound',
                           color: Colors.black),
                     ),
                     Container(
@@ -589,6 +600,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 color: Colors.black,
                                 fontSize:
                                     MediaQuery.of(context).size.height * 0.015,
+                                    fontFamily: 'VarelaRound',
                                 fontWeight: FontWeight.bold),
                           )),
                     )

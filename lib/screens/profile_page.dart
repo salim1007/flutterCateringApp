@@ -39,6 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                     child: Icon(
                       Icons.edit,
+                      color: Colors.black,
                     ),
                   ));
             })
@@ -50,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Container(
                   padding: EdgeInsets.all(0),
                   child: Container(
-                    height: 270,
+                    height: MediaQuery.of(context).size.height * 0.3,
                     width: double.infinity,
                     decoration: BoxDecoration(
                         color: Colors.orangeAccent,
@@ -63,8 +64,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: 50,
                         ),
                         Container(
-                          width: 150,
-                          height: 150,
+                          width: MediaQuery.of(context).size.width * 0.39,
+                          height: MediaQuery.of(context).size.height * 0.18,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(500),
                             color: Theme.of(context).scaffoldBackgroundColor,
@@ -73,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               if (auth.getUser['profile_photo_path'] != null)
                                 Image.network(
-                                  'http://192.168.1.131:8000/storage/${auth.getUser['profile_photo_path']}',
+                                  'http://102.37.33.97/storage/${auth.getUser['profile_photo_path']}',
                                   width: 150,
                                   height: 150,
                                   fit: BoxFit.cover,
@@ -93,6 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 .textTheme
                                                 .headlineMedium
                                                 ?.color,
+                                                fontFamily: 'VarelaRound',
                                           ),
                                         )
                                       : Icon(
@@ -230,6 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     .textTheme
                                     .headlineMedium
                                     ?.color,
+                                    fontFamily: 'VarelaRound',
                               ),
                             ))),
                   );

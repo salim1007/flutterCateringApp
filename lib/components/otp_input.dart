@@ -21,7 +21,7 @@ class OtpInput extends StatelessWidget {
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           counterText: '',
-          hintStyle: TextStyle(color: Colors.black, fontSize: 20.0)
+          hintStyle: TextStyle(color: Colors.black, fontSize: 20.0,fontFamily: 'VarelaRound',)
         ),
         onChanged: (value) {
           if (value.length == 1) {

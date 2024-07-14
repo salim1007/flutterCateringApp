@@ -32,7 +32,11 @@ class _BookingPageState extends State<BookingPage> {
         appBar: AppBar(
           title: Text(
             'Book Table',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'VarelaRound',
+            ),
           ),
           centerTitle: true,
           backgroundColor: Colors.orangeAccent,
@@ -54,6 +58,7 @@ class _BookingPageState extends State<BookingPage> {
                     Text('Select Date',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontFamily: 'VarelaRound',
                           fontSize: MediaQuery.of(context).size.width > 550
                               ? MediaQuery.of(context).size.width * 0.022
                               : 16,
@@ -65,6 +70,7 @@ class _BookingPageState extends State<BookingPage> {
                       child: Text('Select Time',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'VarelaRound',
                             fontSize: MediaQuery.of(context).size.width > 550
                                 ? MediaQuery.of(context).size.width * 0.022
                                 : 16,
@@ -100,6 +106,7 @@ class _BookingPageState extends State<BookingPage> {
                           '${index + 9}:00 ${index + 9 > 11 ? 'PM' : 'AM'}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'VarelaRound',
                             fontSize: MediaQuery.of(context).size.width > 550
                                 ? MediaQuery.of(context).size.width * 0.022
                                 : 12,
@@ -128,10 +135,12 @@ class _BookingPageState extends State<BookingPage> {
                     children: [
                       Text('Number of people',
                           style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width > 550
-                                  ? MediaQuery.of(context).size.width * 0.022
-                                  : 16,
-                              fontWeight: FontWeight.bold)),
+                            fontSize: MediaQuery.of(context).size.width > 550
+                                ? MediaQuery.of(context).size.width * 0.022
+                                : 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'VarelaRound',
+                          )),
                       SizedBox(
                         height: 15,
                       ),
@@ -170,7 +179,10 @@ class _BookingPageState extends State<BookingPage> {
                           ),
                           Text(
                             '$quantity',
-                            style: TextStyle(fontSize: 21),
+                            style: TextStyle(
+                              fontSize: 21,
+                              fontFamily: 'VarelaRound',
+                            ),
                           ),
                           SizedBox(
                             width: 10,
@@ -273,6 +285,7 @@ class _BookingPageState extends State<BookingPage> {
       calendarStyle: CalendarStyle(
           selectedTextStyle: TextStyle(
             fontSize: MediaQuery.of(context).size.width * 0.4,
+            fontFamily: 'VarelaRound',
           ),
           todayDecoration: const BoxDecoration(
             color: Colors.orangeAccent,

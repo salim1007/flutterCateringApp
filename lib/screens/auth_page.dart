@@ -46,6 +46,7 @@ class _AuthPageState extends State<AuthPage> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 32,
+                  fontFamily: 'VarelaRound',
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -58,6 +59,7 @@ class _AuthPageState extends State<AuthPage> {
                     : AppText.enText['register_text']!,
                 style: const TextStyle(
                   fontSize: 15,
+                  fontFamily: 'VarelaRound',
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -79,6 +81,7 @@ class _AuthPageState extends State<AuthPage> {
                         'forgot password?',
                         style: TextStyle(
                             fontSize: 13,
+                            fontFamily: 'VarelaRound',
                             color: Colors.blueAccent,
                             fontWeight: FontWeight.bold),
                       ),
@@ -94,6 +97,7 @@ class _AuthPageState extends State<AuthPage> {
                         : AppText.enText['registered_text']!,
                     style: TextStyle(
                       fontSize: 13,
+                      fontFamily: 'VarelaRound',
                     ),
                   ),
                   TextButton(

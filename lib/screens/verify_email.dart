@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_delivery_app/components/toast_card.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 
@@ -77,6 +78,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'VarelaRound',
                   color: Colors.white),
             ),
             centerTitle: true,
@@ -108,6 +110,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                     'Please enter the 5 Digit Code sent to your email',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.035,
+                      fontFamily: 'VarelaRound',
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -165,13 +168,16 @@ class _VerifyEmailState extends State<VerifyEmail> {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor,
-                                  strokeWidth: 3,
-                                ),
-                              );
+                                  width: 20,
+                                  height: 20,
+                                  child: Center(
+                                    child: LoadingAnimationWidget
+                                        .threeArchedCircle(
+                                      color: Colors.white,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.09,
+                                    ),
+                                  ));
                             } else if (!snapshot.hasData ||
                                 snapshot.data! <= 0) {
                               return TextButton(
@@ -236,6 +242,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
             style: TextStyle(
                 color: Theme.of(context).textTheme.headlineMedium?.color,
                 fontSize: MediaQuery.of(context).size.width * 0.04,
+                fontFamily: 'VarelaRound',
                 fontWeight: FontWeight.bold),
           ),
           content: Text(
@@ -244,6 +251,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
             style: TextStyle(
                 color: Theme.of(context).textTheme.headlineMedium?.color,
                 fontSize: MediaQuery.of(context).size.width * 0.035,
+                fontFamily: 'VarelaRound',
                 fontWeight: FontWeight.bold),
           ),
           actions: [
@@ -263,6 +271,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.of(context).size.width * 0.033,
+                          fontFamily: 'VarelaRound',
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -279,6 +288,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.of(context).size.width * 0.033,
+                          fontFamily: 'VarelaRound',
                           fontWeight: FontWeight.bold),
                     ),
                   ),

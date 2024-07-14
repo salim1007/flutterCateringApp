@@ -12,6 +12,7 @@ import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
 import 'package:food_delivery_app/utils/extensions.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_in_button/sign_in_button.dart';
@@ -143,9 +144,10 @@ class _RegisterFormState extends State<RegisterForm> {
                 height: 15,
               ),
               isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.orangeAccent,
+                  ? Center(
+                      child: LoadingAnimationWidget.threeArchedCircle(
+                        color: Colors.white,
+                        size: MediaQuery.of(context).size.width * 0.09,
                       ),
                     )
                   : isLoadingGoogle
@@ -164,11 +166,11 @@ class _RegisterFormState extends State<RegisterForm> {
                                       _passwordController.text,
                                       _passwordConfirmController.text);
 
-                              print(userRegistration);
+                            
 
                               if (userRegistration['data'] != null) {
                                 user = json.decode(userRegistration['data']);
-                                print(user);
+                            
 
                                 MyApp.navigatorKey.currentState!.pushNamed(
                                     'reg_otp_verification',
@@ -203,6 +205,7 @@ class _RegisterFormState extends State<RegisterForm> {
                             'Sign Up',
                             style: TextStyle(
                               fontSize: 18,
+                              fontFamily: 'VarelaRound',
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
@@ -212,8 +215,9 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               isLoadingGoogle
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.orangeAccent,
+                      child: LoadingAnimationWidget.threeArchedCircle(
+                        color: Colors.white,
+                        size: MediaQuery.of(context).size.width * 0.09,
                       ),
                     )
                   : isLoading
@@ -247,26 +251,26 @@ class _RegisterFormState extends State<RegisterForm> {
           await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user != null) {
-        print(userCredential.user?.displayName);
+     
 
         var response = await DioProvider().signUpnWithGoogle(
             userCredential.user?.email,
             userCredential.user?.displayName ?? 'no_user_name');
 
-        print(response);
+     
 
         if (response) {
-          print('inside');
+      
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           final token = prefs.getString('token') ?? '';
           final userDetail = await DioProvider().getUser(token);
-          print(token);
-          print(userDetail);
+         
+          
           if (userDetail != null) {
             setState(() {
               final userData = json.decode(userDetail);
 
-              print(userData);
+             
 
               auth.loginSuccess(userData);
 
@@ -286,7 +290,7 @@ class _RegisterFormState extends State<RegisterForm> {
         }
       }
     } catch (error) {
-      print(error);
+     
     }
   }
 }

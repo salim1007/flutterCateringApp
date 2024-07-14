@@ -39,7 +39,7 @@ class _ImageSliderState extends State<ImageSlider> {
           ),
           const Text(
             'Ydde Fast Foods',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'VarelaRound'),
           ),
           Expanded(
             child: CarouselSlider(
@@ -48,19 +48,19 @@ class _ImageSliderState extends State<ImageSlider> {
                   children: [
                     ClipRRect(
                       borderRadius:
-                          BorderRadius.circular(10), // Set border radius here
+                          BorderRadius.circular(10),
                       child: Image.asset(
                         assetImages[index],
                         fit: BoxFit.cover,
                         height: 380,
-                        width: double.infinity, // Adjust image height as needed
+                        width: double.infinity, 
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       imageTexts[index],
                       style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04, fontWeight: FontWeight.bold),
+                          fontSize: MediaQuery.of(context).size.width * 0.04,fontFamily: 'VarelaRound', fontWeight: FontWeight.bold),
                     ),
                   ],
                 );
@@ -90,6 +90,7 @@ class _ImageSliderState extends State<ImageSlider> {
                 'Get Started',
                 style: TextStyle(
                   fontSize: 15,
+                  fontFamily: 'VarelaRound',
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),

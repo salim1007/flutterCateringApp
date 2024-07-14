@@ -7,7 +7,7 @@ class DioProvider {
       String phone, String password, String passwordConfirm) async {
     try {
       var user =
-          await Dio().post('http://192.168.1.131:8000/api/register', data: {
+          await Dio().post('http://102.37.33.97/api/register', data: {
         'name': username,
         'email': email,
         'phone': phone,
@@ -15,13 +15,12 @@ class DioProvider {
         'password_confirmation': passwordConfirm
       });
       if (user.statusCode == 201 && user.data != '') {
-        // return json.encode(user.data);
         return {
           'data': json.encode(user.data),
           'message': 'Successfully registered'
         };
       } else {
-        // return false;
+       
         return {'data': null, 'message': 'User with this email exists'};
       }
     } catch (error) {
@@ -35,7 +34,7 @@ class DioProvider {
   Future<dynamic> signUpnWithGoogle(String? email, String? name) async {
     try {
       var user = await Dio().post(
-        'http://192.168.1.131:8000/api/signUpnWithGoogle',
+        'http://102.37.33.97/api/signUpnWithGoogle',
         data: {'email': email, 'name': name},
       );
       if (user.data != null) {
@@ -53,7 +52,7 @@ class DioProvider {
 
   Future<dynamic> verifyOtp(String otpValue, String email) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/verifyOtp',
+      var response = await Dio().post('http://102.37.33.97/api/verifyOtp',
           data: {'otp': otpValue, 'email': email});
       if (response.statusCode == 200) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -73,7 +72,7 @@ class DioProvider {
   Future<Map<String, dynamic>> verifyEmail(String email) async {
     try {
       final response = await Dio().post(
-        'http://192.168.1.131:8000/api/verifyEmail',
+        'http://102.37.33.97/api/verifyEmail',
         data: {'email': email},
       );
 
@@ -98,7 +97,7 @@ class DioProvider {
   Future<dynamic> getProducts(String category) async {
     try {
       var products = await Dio().get(
-          'http://192.168.1.131:8000/api/getProducts',
+          'http://102.37.33.97/api/getProducts',
           queryParameters: {'category': category});
       if (products.statusCode == 200 && products.data != '') {
         return json.encode(products.data);
@@ -112,13 +111,13 @@ class DioProvider {
 
   Future<Map<String, dynamic>> getToken(String email, String password) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/login',
+      var response = await Dio().post('http://102.37.33.97/api/login',
           data: {'email': email, 'password': password});
       if (response.data['status'] == 200) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', response.data['token']);
         await prefs.setBool('isLoggedIn', true);
-        print(response.data['status']);
+
 
         return {
           'status': response.data['status'],
@@ -143,7 +142,7 @@ class DioProvider {
   Future<dynamic> removeUser(String email) async {
     try {
       var response = await Dio().delete(
-          'http://192.168.1.131:8000/api/removeUser',
+          'http://102.37.33.97/api/removeUser',
           queryParameters: {'email': email});
       if (response.statusCode == 200) {
         return true;
@@ -157,7 +156,7 @@ class DioProvider {
 
   Future<dynamic> getUser(String token) async {
     try {
-      var user = await Dio().get('http://192.168.1.131:8000/api/user',
+      var user = await Dio().get('http://102.37.33.97/api/user',
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (user.data != '') {
         return json.encode(user.data);
@@ -171,7 +170,7 @@ class DioProvider {
 
   Future<dynamic> getCategory(int categoryId) async {
     try {
-      var category = await Dio().get('http://192.168.1.131:8000/api/category',
+      var category = await Dio().get('http://102.37.33.97/api/category',
           queryParameters: {'category_id': categoryId});
       if (category.statusCode == 200 && category.data != '') {
         return json.encode(category.data);
@@ -192,7 +191,7 @@ class DioProvider {
       String prodImage,
       String token) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/addToCart',
+      var response = await Dio().post('http://102.37.33.97/api/addToCart',
           data: {
             'user_id': userId,
             'prod_id': productId,
@@ -216,7 +215,7 @@ class DioProvider {
   Future<dynamic> getUserCart(int userId) async {
     try {
       var cart = await Dio().get(
-        'http://192.168.1.131:8000/api/getCarts',
+        'http://102.37.33.97/api/getCarts',
         queryParameters: {'user_id': userId},
       );
       if (cart.statusCode == 200 && cart.data != '') {
@@ -231,7 +230,7 @@ class DioProvider {
 
   Future<dynamic> cartIncr(int userId, int prodId, String token) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/incrCart',
+      var response = await Dio().post('http://102.37.33.97/api/incrCart',
           data: {'user_id': userId, 'prod_id': prodId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.statusCode == 200 && response.data != '') {
@@ -246,7 +245,7 @@ class DioProvider {
 
   Future<dynamic> cartDecr(int userId, int prodId, String token) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/decrCart',
+      var response = await Dio().post('http://102.37.33.97/api/decrCart',
           data: {'user_id': userId, 'prod_id': prodId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.statusCode == 200 && response.data != '') {
@@ -263,7 +262,7 @@ class DioProvider {
       int userId, int prodId, String token) async {
     try {
       var response = await Dio().delete(
-          'http://192.168.1.131:8000/api/deleteProduct',
+          'http://102.37.33.97/api/deleteProduct',
           queryParameters: {'user_id': userId, 'prod_id': prodId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.statusCode == 200 && response.data != '') {
@@ -280,7 +279,7 @@ class DioProvider {
       String location, String token) async {
     try {
       var response =
-          await Dio().post('http://192.168.1.131:8000/api/placeOrder',
+          await Dio().post('http://102.37.33.97/api/placeOrder',
               data: {
                 'user_id': userId,
                 'prod_list': cartItems,
@@ -294,14 +293,14 @@ class DioProvider {
         return false;
       }
     } catch (error) {
-      print(error);
+      return error.toString();
     }
   }
 
   Future<dynamic> deleteUserCart(int userId, String token) async {
     try {
       var response = await Dio().delete(
-          'http://192.168.1.131:8000/api/deleteUserCart',
+          'http://102.37.33.97/api/deleteUserCart',
           queryParameters: {'user_id': userId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.statusCode == 200 && response.data != '') {
@@ -317,7 +316,7 @@ class DioProvider {
   Future<dynamic> getAuthUserOrders(int userId, String token) async {
     try {
       var orders = await Dio().get(
-          'http://192.168.1.131:8000/api/retrieveOrders',
+          'http://102.37.33.97/api/retrieveOrders',
           queryParameters: {'user_id': userId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (orders.statusCode == 200 && orders.data != '') {
@@ -333,7 +332,7 @@ class DioProvider {
   Future<dynamic> bookTable(String date, String time, String day, int userId,
       int noOfPeople, String token) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/bookTable',
+      var response = await Dio().post('http://102.37.33.97/api/bookTable',
           data: {
             'date': date,
             'time': time,
@@ -354,7 +353,7 @@ class DioProvider {
 
   Future<dynamic> fetchBooks(int userId, String token) async {
     try {
-      var books = await Dio().get('http://192.168.1.131:8000/api/getUserBooks',
+      var books = await Dio().get('http://102.37.33.97/api/getUserBooks',
           queryParameters: {'user_id': userId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (books.statusCode == 200 && books.data != '') {
@@ -371,7 +370,7 @@ class DioProvider {
       String status, int bookId, String token) async {
     try {
       var response = await Dio().put(
-          'http://192.168.1.131:8000/api/changeBookStatus',
+          'http://102.37.33.97/api/changeBookStatus',
           data: {'status': status},
           queryParameters: {'book_id': bookId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
@@ -381,7 +380,7 @@ class DioProvider {
         return false;
       }
     } catch (error) {
-      print('Errorz: $error');
+     
       return error.toString();
     }
   }
@@ -389,7 +388,7 @@ class DioProvider {
   Future<dynamic> getAllProducts(String token) async {
     try {
       var products = await Dio().get(
-          'http://192.168.1.131:8000/api/getAllProducts',
+          'http://102.37.33.97/api/getAllProducts',
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (products.statusCode == 200 && products.data != '') {
         return json.encode(products.data);
@@ -403,7 +402,7 @@ class DioProvider {
 
   Future<dynamic> storeFavProdList(List list, String token) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/storeFavs',
+      var response = await Dio().post('http://102.37.33.97/api/storeFavs',
           data: {'fav_list': list},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.statusCode == 201) {
@@ -420,7 +419,7 @@ class DioProvider {
       double ratingValue, int userId, int prodId, String token) async {
     try {
       var response = await Dio().post(
-        'http://192.168.1.131:8000/api/rateProduct',
+        'http://102.37.33.97/api/rateProduct',
         data: {'user_id': userId, 'prod_id': prodId, 'rate_value': ratingValue},
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -438,7 +437,7 @@ class DioProvider {
       String phone, String address, String token) async {
     try {
       var response =
-          await Dio().put('http://192.168.1.131:8000/api/updateProfile',
+          await Dio().put('http://102.37.33.97/api/updateProfile',
               data: {
                 'user_id': userId,
                 'username': username,
@@ -460,7 +459,7 @@ class DioProvider {
   Future<dynamic> getNotifications(int userId, String token) async {
     try {
       var response = await Dio().get(
-          'http://192.168.1.131:8000/api/getNotifications',
+          'http://102.37.33.97/api/getNotifications',
           queryParameters: {'user_id': userId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.data != null) {
@@ -476,7 +475,7 @@ class DioProvider {
   Future<dynamic> updateSeenNotifications(int userId, String token) async {
     try {
       var response = await Dio().put(
-          'http://192.168.1.131:8000/api/updateNotifications',
+          'http://102.37.33.97/api/updateNotifications',
           queryParameters: {'user_id': userId},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.data != null) {
@@ -489,7 +488,7 @@ class DioProvider {
 
   Future<dynamic> logout(String token) async {
     try {
-      var response = await Dio().post('http://192.168.1.131:8000/api/logout',
+      var response = await Dio().post('http://102.37.33.97/api/logout',
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       if (response.statusCode == 200) {
         return response.statusCode;
@@ -502,7 +501,7 @@ class DioProvider {
   Future<dynamic> addNewPassword(String newPassword, String email) async {
     try {
       var response = await Dio().patch(
-          'http://192.168.1.131:8000/api/addNewPassword',
+          'http://102.37.33.97/api/addNewPassword',
           data: {'new_password': newPassword},
           queryParameters: {'email': email});
       if (response.statusCode == 200) {

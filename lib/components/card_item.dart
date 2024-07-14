@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class CardItem extends StatefulWidget {
@@ -24,8 +25,6 @@ class _CardItemState extends State<CardItem> {
     final double price = double.parse(widget.product['price'].toString());
     final formattedPrice = NumberFormat("#,##0", "en_US").format(price);
 
-    print("here is th data!${widget.product['avg_product_rating']}");
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: GestureDetector(
@@ -33,8 +32,6 @@ class _CardItemState extends State<CardItem> {
           catId = widget.product['category_id'];
           final categoryItems = await DioProvider().getCategory(catId);
           final category = json.decode(categoryItems);
-
-          print(category);
 
           MyApp.navigatorKey.currentState!.pushNamed('item_details',
               arguments: {'product': widget.product, 'category': category});
@@ -55,12 +52,33 @@ class _CardItemState extends State<CardItem> {
                 width: MediaQuery.of(context).size.width * 0.4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.orangeAccent,
-                  image: DecorationImage(
-                    image: NetworkImage(
-                        'http://192.168.1.131:8000/storage/${widget.product['photo_path']}'),
-                    fit: BoxFit.cover,
-                  ),
+                  color: Colors.transparent,
+                ),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        'http://102.37.33.97/storage/${widget.product['photo_path']}',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return Center(
+                            child: LoadingAnimationWidget.flickr(
+                              leftDotColor: Colors.orangeAccent,
+                              rightDotColor: Colors.black,
+                              size: MediaQuery.of(context).size.width * 0.09,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Row(
@@ -77,6 +95,7 @@ class _CardItemState extends State<CardItem> {
                         : '5',
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.025,
+                        fontFamily: 'VarelaRound',
                         fontWeight: FontWeight.bold),
                   )
                 ],
@@ -85,12 +104,14 @@ class _CardItemState extends State<CardItem> {
                 widget.product['product_name'],
                 style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width * 0.025,
+                    fontFamily: 'VarelaRound',
                     fontWeight: FontWeight.bold),
               ),
               Text(
                 'Tsh. $formattedPrice/=',
                 style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width * 0.025,
+                    fontFamily: 'VarelaRound',
                     fontWeight: FontWeight.bold),
               ),
             ],

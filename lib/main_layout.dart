@@ -32,7 +32,7 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     bool isConnected =
-        Provider.of<ConnectivityService>(context).getInternetConnectionStatus;
+        Provider.of<ConnectivityService>(context, listen: true).getInternetConnectionStatus;
     if (!isConnected) {
       ScaffoldMessenger(
         child: SnackBar(
@@ -43,6 +43,7 @@ class _MainLayoutState extends State<MainLayout> {
               'No internet Connection!',
               style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.035,
+                  fontFamily: 'VarelaRound',
                   color: Colors.black),
             )),
       );
@@ -57,18 +58,17 @@ class _MainLayoutState extends State<MainLayout> {
       child: Scaffold(
         body: PageView(
           controller: _page,
+          physics: const NeverScrollableScrollPhysics(),
           onPageChanged: ((value) {
             setState(() {
               currentPage = value;
             });
           }),
           children: [
-            //to be added - condition for drivers
             HomePage(),
             CartsPage(),
             OrdersPage(),
             BookingPage(),
-            // FavouritesPage(),
             ProfilePage(),
           ],
         ),
@@ -102,7 +102,8 @@ class _MainLayoutState extends State<MainLayout> {
                         Text(
                           'Bookings',
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: MediaQuery.of(context).size.width * 0.024 ,
+                            fontFamily: 'VarelaRound',
                             color:
                                 Theme.of(context).textTheme.headlineMedium?.color,
                           ),
@@ -140,10 +141,6 @@ class _MainLayoutState extends State<MainLayout> {
               child: FaIcon(FontAwesomeIcons.book),
               // label: 'Book'
             ),
-            // CurvedNavigationBarItem(
-            //   child: FaIcon(FontAwesomeIcons.heart),
-            //   // label: 'Notify'
-            // ),
             CurvedNavigationBarItem(
               child: FaIcon(
                 FontAwesomeIcons.person,

@@ -6,6 +6,7 @@ import 'package:food_delivery_app/components/timeline.dart';
 import 'package:food_delivery_app/main.dart';
 import 'package:food_delivery_app/models/auth_model.dart';
 import 'package:food_delivery_app/providers/dio_provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -50,17 +51,26 @@ class _OrdersPageState extends State<OrdersPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: Text('Orders'),
+            title: Text(
+              'Orders',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'VarelaRound',
+              ),
+            ),
             centerTitle: true,
             backgroundColor: Colors.orangeAccent,
             shadowColor: Colors.black,
             automaticallyImplyLeading: false,
           ),
           body: isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                  color: Colors.orangeAccent,
-                ))
+              ? Center(
+                  child: LoadingAnimationWidget.threeArchedCircle(
+                    color: Colors.white,
+                    size: MediaQuery.of(context).size.width * 0.09,
+                  ),
+                )
               : ordersList.isEmpty
                   ? Center(
                       child: Column(
@@ -68,7 +78,10 @@ class _OrdersPageState extends State<OrdersPage> {
                           children: [
                             const Text(
                               'You currently have no Orders!',
-                              style: TextStyle(fontSize: 13),
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontFamily: 'VarelaRound',
+                              ),
                             ),
                             Lottie.asset('assets/orders_empty.json',
                                 width: MediaQuery.of(context).size.width * 0.3,
@@ -119,6 +132,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                 .size
                                                                 .width *
                                                             0.022,
+                                                    fontFamily: 'VarelaRound',
                                                   )),
                                             ),
                                             Expanded(
@@ -130,6 +144,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                 .size
                                                                 .width *
                                                             0.022,
+                                                    fontFamily: 'VarelaRound',
                                                   )),
                                             ),
                                             Expanded(
@@ -141,6 +156,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                 .size
                                                                 .width *
                                                             0.022,
+                                                    fontFamily: 'VarelaRound',
                                                   )),
                                             ),
                                           ],
@@ -163,6 +179,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                   .size
                                                                   .width *
                                                               0.022,
+                                                      fontFamily: 'VarelaRound',
                                                     ),
                                                   ),
                                                 ),
@@ -175,6 +192,8 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                 .size
                                                                 .width *
                                                             0.022,
+                                                        fontFamily:
+                                                            'VarelaRound',
                                                       )),
                                                 ),
                                                 Expanded(
@@ -186,6 +205,8 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                 .size
                                                                 .width *
                                                             0.022,
+                                                        fontFamily:
+                                                            'VarelaRound',
                                                       )),
                                                 ),
                                               ],
@@ -208,6 +229,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                         .size
                                                         .width *
                                                     0.022,
+                                                fontFamily: 'VarelaRound',
                                               ),
                                             ),
                                             Row(
@@ -221,6 +243,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                 .size
                                                                 .width *
                                                             0.022,
+                                                    fontFamily: 'VarelaRound',
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -244,6 +267,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                         .size
                                                         .width *
                                                     0.022,
+                                                fontFamily: 'VarelaRound',
                                               ),
                                             ),
                                           ],
@@ -264,6 +288,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                   BorderRadius.circular(8)),
                                           padding: EdgeInsets.all(1),
                                           child: TextButton(
+                                            style: ButtonStyle(),
                                             onPressed: () {
                                               showDialog(
                                                   context: context,
@@ -295,6 +320,8 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                               .size
                                                                               .width *
                                                                           0.03,
+                                                                      fontFamily:
+                                                                          'VarelaRound',
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold),
@@ -317,6 +344,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                           style: TextStyle(
                                                                               color: Colors.black,
                                                                               fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                              fontFamily: 'VarelaRound',
                                                                               fontWeight: FontWeight.bold),
                                                                         ),
                                                                         orderItem['status'] ==
@@ -326,6 +354,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                                 style: TextStyle(
                                                                                   color: Colors.black,
                                                                                   fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                  fontFamily: 'VarelaRound',
                                                                                 ),
                                                                               )
                                                                             : Text(
@@ -333,6 +362,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                                 style: TextStyle(
                                                                                   color: Colors.black,
                                                                                   fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                  fontFamily: 'VarelaRound',
                                                                                 ),
                                                                               ),
                                                                       ],
@@ -360,6 +390,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                           style: TextStyle(
                                                                               color: Colors.black,
                                                                               fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                              fontFamily: 'VarelaRound',
                                                                               fontWeight: FontWeight.bold),
                                                                         ),
                                                                         orderItem['status'] ==
@@ -369,6 +400,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                                 style: TextStyle(
                                                                                   color: Colors.black,
                                                                                   fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                  fontFamily: 'VarelaRound',
                                                                                 ),
                                                                               )
                                                                             : orderItem['status'] == 'on_delivery' || orderItem['status'] == 'delivered'
@@ -376,11 +408,13 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                                     style: TextStyle(
                                                                                       color: Colors.black,
                                                                                       fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                      fontFamily: 'VarelaRound',
                                                                                     ))
                                                                                 : Text(
                                                                                     'Awaiting...',
                                                                                     style: TextStyle(
                                                                                       fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                      fontFamily: 'VarelaRound',
                                                                                     ),
                                                                                   ),
                                                                       ],
@@ -407,6 +441,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                           style: TextStyle(
                                                                               color: Colors.black,
                                                                               fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                              fontFamily: 'VarelaRound',
                                                                               fontWeight: FontWeight.bold),
                                                                         ),
                                                                         orderItem['status'] ==
@@ -416,6 +451,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                                 style: TextStyle(
                                                                                   color: Colors.black,
                                                                                   fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                  fontFamily: 'VarelaRound',
                                                                                 ),
                                                                               )
                                                                             : orderItem['status'] == 'delivered'
@@ -423,11 +459,13 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                                     style: TextStyle(
                                                                                       color: Colors.black,
                                                                                       fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                      fontFamily: 'VarelaRound',
                                                                                     ))
                                                                                 : Text(
                                                                                     'Awaiting...',
                                                                                     style: TextStyle(
                                                                                       fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                      fontFamily: 'VarelaRound',
                                                                                     ),
                                                                                   ),
                                                                       ],
@@ -452,6 +490,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                           style: TextStyle(
                                                                               color: Colors.black,
                                                                               fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                              fontFamily: 'VarelaRound',
                                                                               fontWeight: FontWeight.bold),
                                                                         ),
                                                                         orderItem['status'] ==
@@ -461,12 +500,14 @@ class _OrdersPageState extends State<OrdersPage> {
                                                                                 style: TextStyle(
                                                                                   color: Colors.black,
                                                                                   fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                  fontFamily: 'VarelaRound',
                                                                                 ),
                                                                               )
                                                                             : Text(
                                                                                 'Awaiting...',
                                                                                 style: TextStyle(
                                                                                   fontSize: MediaQuery.of(context).size.width * 0.025,
+                                                                                  fontFamily: 'VarelaRound',
                                                                                 ),
                                                                               ),
                                                                       ],
@@ -486,6 +527,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                                         .size
                                                         .width *
                                                     0.022,
+                                                fontFamily: 'VarelaRound',
                                               ),
                                             ),
                                           ))

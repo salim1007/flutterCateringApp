@@ -14,7 +14,7 @@ class AuthModel extends ChangeNotifier {
   List<dynamic> _fav = [];
   int userId = 0;
   String token = '';
-  List <dynamic> notificationLength = [];
+  List<dynamic> notificationLength = [];
   String todaysDate = DateFormat('M/d/y').format(DateTime.now());
 
   Position? _currentLocation;
@@ -40,7 +40,6 @@ class AuthModel extends ChangeNotifier {
   int get getAuthUserID {
     return userId;
   }
-
 
   List<dynamic> get getAuthBookings {
     return authBookings;
@@ -92,16 +91,16 @@ class AuthModel extends ChangeNotifier {
     return favProducts;
   }
 
-  Future<void> _initializeLocation() async {
+  Future<void> initializeLocation() async {
     _currentLocation = await _getCurrentLocation();
     await _getAddressFromCoordinates();
-    print(_currentAddress);
+   
   }
 
   Future<Position> _getCurrentLocation() async {
     servicePermisiion = await Geolocator.isLocationServiceEnabled();
     if (servicePermisiion == false) {
-      print('Service disabled!');
+     
     }
 
     permission = await Geolocator.checkPermission();
@@ -118,8 +117,11 @@ class AuthModel extends ChangeNotifier {
           _currentLocation!.latitude, _currentLocation!.longitude);
       Placemark place = placemarks[0];
 
-      _currentAddress =
-          '${place.street} - ${place.subLocality}, ${place.locality}';
+      _currentAddress = '${place.subLocality}, ${place.locality}';
+
+      return _currentAddress;
+
+    
     } catch (error) {
       return error;
     }
@@ -149,12 +151,13 @@ class AuthModel extends ChangeNotifier {
     user = newUserData;
     notifyListeners();
   }
-  void updateNotificationCount(int newCount){
+
+  void updateNotificationCount(int newCount) {
     notificationLength.length = newCount;
     notifyListeners();
   }
 
-  void updateProductRatings(List<dynamic> fetchedProducts){
+  void updateProductRatings(List<dynamic> fetchedProducts) {
     systemProducts = fetchedProducts;
     notifyListeners();
   }
@@ -168,26 +171,26 @@ class AuthModel extends ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token') ?? '';
-    print('token: $token'); // Debug line
+
 
     var products = await DioProvider().getAllProducts(token);
     var productDetails = json.decode(products);
-    print('productDetails: $productDetails'); // Debug line
+
 
     var bookings = await DioProvider().fetchBooks(user['id'], token);
     var authUserBookings = json.decode(bookings);
-    print('authUserBookings: $authUserBookings'); // Debug line
+   
 
     var cart = await DioProvider().getUserCart(user['id']);
     var authUserCart = json.decode(cart);
-    print('authUserCart: $authUserCart'); // Debug line
+  
 
     double total = 0;
     for (var cartItem in authUserCart) {
       total += cartItem['total_price'];
     }
 
-    for (var msg in user['user_notes']){
+    for (var msg in user['user_notes']) {
       msg['status'] == 'not_viewed';
       notificationLength.add(msg);
     }
@@ -199,7 +202,7 @@ class AuthModel extends ChangeNotifier {
     // authOrders = authUserOrders;
     systemProducts = productDetails;
 
-    await _initializeLocation();
+    await initializeLocation();
 
     notifyListeners();
   }

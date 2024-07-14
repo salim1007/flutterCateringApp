@@ -21,7 +21,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.orangeAccent,
         ),
         padding: EdgeInsets.only(top: 270),
@@ -42,6 +42,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                     'Your Favourites',
                     style: TextStyle(
                         fontSize: 14,
+                        fontFamily: 'VarelaRound',
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   )
@@ -56,7 +57,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
               width: double.infinity,
               decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(35),
                   )),
               child: Consumer<AuthModel>(builder: (context, auth, child) {
@@ -67,7 +68,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                         children: [
                           const Text(
                             'Your favourites will appear here!',
-                            style: TextStyle(fontSize: 13),
+                            style: TextStyle(fontSize: 13,fontFamily: 'VarelaRound',),
                           ),
                           Lottie.asset('assets/favlist_empty.json',
                               width: MediaQuery.of(context).size.width * 0.25,
